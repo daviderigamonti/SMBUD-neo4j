@@ -7,6 +7,5 @@ This project has been commissioned for the SMBUD course at [**Politecnico di Mil
 * [Davide Rigamonti](https://github.com/davide-rigamonti-polimi) | davide2.rigamonti@mail.polimi.it
 * [Raul Singh](https://github.com/RaulSingh-7) | ---
 * [Mattia Tagliaferri](https://github.com/MattiaTaglia) | ---
-* [Raul Singh](https://github.com/RaulSingh-7) | ---
 
 [**Politecnico di Milano**]: https://www.polimi.it/
