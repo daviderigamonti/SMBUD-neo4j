@@ -1,7 +1,15 @@
 // QUERIES
 
-// Locations with the most infected in a span of time 
-// TODO
+// Return the cities in order of number of contagions in a given span of time
+    
+    :param date1 => datetime("x");
+    :param date2 => datetime("y");
+
+    MATCH (cities:City)<-[LIVES_IN]-(person:Person) 
+    WHERE person.contagionDate >= date($date1) AND person.contagionDate <= date($date2)
+    WITH cities, count(*) AS contagions
+    ORDER BY contagions DESC
+    RETURN cities.name, contagions
 
 
 // People infected in a span of time
@@ -56,16 +64,20 @@
     RETURN  p;
 
 
-// Number of COVID hospitalized people in a span of time
-// TODO
+// Find the the number of hospitalized patiens during a given time
 
+    :param date => datetime("x");
 
-// Cities with the most infected inhabitants in a span of time
-// TODO
+    MATCH (person:Person)-[r:HOSPITALIZED_IN]->(h:Hospital)
+    WHERE $date >= r.beginning AND $date <= r.release
+    RETURN count(*)
 
 
 // Number of vaccinated people that have been infected (after the vaccination)
-// TODO
+    
+    MATCH (p:Person)
+    WHERE p.contagionDate >= p.vaccineDate
+    RETURN count(*)
 
 
 
