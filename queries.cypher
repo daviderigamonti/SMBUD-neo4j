@@ -117,8 +117,34 @@ RETURN  p;
 
 // COMMANDS
 
-// Registration of a COVID test
-// TODO
+// Registration of a negative COVID test
+
+    :param name => "p";
+    :param test_date => datetime("x");
+
+    MATCH (p {name: $name})
+    WITH p,
+        CASE 
+            WHEN p.healing_date IS NULL AND p.contagion_date IS NOT NULL THEN $test_date
+            ELSE p.healing_date
+        END 
+        AS healing
+
+    SET p.negative_test_date = $test_date, p.healing_date = healing
+
+// Registration of a positive COVID test
+
+    :param name => "p";
+    :param test_date => datetime("x");
+
+    MATCH (p {name: $name})
+    WITH p,
+        CASE 
+            WHEN p.contagion_date IS NOT NULL THEN p.contagion_date
+            ELSE $test_date
+        END 
+        AS infection
+    SET p.contagion_date = infection
 
 
 // Registration of a contact via contact application
