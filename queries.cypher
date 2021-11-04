@@ -1,12 +1,12 @@
 // QUERIES
 
-// Return the cities in order of number of contagions in a given span of time
+// Return the cities in order of number of infected in a given span of time
     
     :param date1 => datetime("x");
     :param date2 => datetime("y");
 
     MATCH (cities:City)<-[LIVES_IN]-(person:Person) 
-    WHERE person.contagionDate >= $date1 AND person.contagionDate <= $date2
+    WHERE person.contagion_date >= $date1 AND person.contagion_date <= $date2
     WITH cities, count(*) AS infected
     ORDER BY infected DESC
     RETURN cities.name, infected
@@ -91,15 +91,15 @@ RETURN  p;
 
     :param date => datetime("x");
 
-    MATCH (person:Person)-[r:HOSPITALIZED_IN]->(h:Hospital)
-    WHERE $date >= r.beginning AND $date <= r.release
+    MATCH (p:Person)-[r:HOSPITALIZED_IN]->(h:Hospital)
+    WHERE $date >= r.date AND $date <= p.healing_date
     RETURN count(*)
 
 
 // Number of vaccinated people that have been infected (after the vaccination)
     
     MATCH (p:Person)
-    WHERE p.contagionDate >= p.vaccineDate
+    WHERE p.contagion_date >= p.vaccine_date
     RETURN count(*)
     
 
@@ -108,8 +108,8 @@ RETURN  p;
     :param date1 => datetime("x");
     :param date2 => datetime("y");
 
-    MATCH (places:Place)<-[r:VISITED]-(person:Person)
-    WHERE $date1 <= r.endVisit AND $date2 => r.startVisit
+    MATCH (places:Place)<-[r:WENT_IN]-(person:Person)
+    WHERE $date1 <= r.date AND r.date <= $date2
     WITH places, count(*) AS infected
     ORDER BY infected DESC
     RETURN places.name, infected
