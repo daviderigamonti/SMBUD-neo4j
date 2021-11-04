@@ -149,21 +149,23 @@ RETURN  p;
 
 // Registration of a contact via contact application
 
-    :param name1 => "p1";
-    :param name2 => "p2";
-    :param date => datetime("d");
-    :param place => "p";
-    MATCH   (a:Person {name:$p1}), (b:Person {name:$p2})
-    CREATE  (a)-[r:contact {date:$date, place:$place}]->(b);
+:param name1 => "p1";
+:param name2 => "p2";
+:param date => date("d");
+MATCH   (a:Person {name:$name1}), (b:Person {name:$name2})
+CREATE  (a)-[r:HAS_MET {date:$date}]->(b), 
+        (b)-[r:HAS_MET {date:$date}]->(a);
 
 
 // Registration of an access in a given location 
 
-    :param name => "prs";
-    :param place => "plc";
-    :param type => "t";
-    :param start => datetime("x");
-    :param end => datetime("y");
-    MATCH   (a:Person {name:$prs}),
-            (b:Place {name:$place, type:$type})
-    CREATE  (a)-[r:goes {start:$start, end:$end}]->(b);
+:param name => "prs";
+:param location => "loc";
+:param type => "t";
+:param date => date("d");
+// :param start => datetime("x");
+// :param end => datetime("y");
+MATCH   (a:Person {name:$name}),
+        (b:Location {name:$location, type:$type})
+CREATE  (a)-[r:WENT_IN {date:$date}]->(b);        
+// CREATE  (a)-[r:goes {start:$start, end:$end}]->(b);
