@@ -1,0 +1,132 @@
+%----------------------------------------------------------------------------------------
+%	PACKETS AND CONFIGURATION
+%----------------------------------------------------------------------------------------
+
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{times} % Times New Roman font
+\usepackage{graphicx} % 'graphics' package interface
+\usepackage{geometry} % Edit document margins
+
+% HELPER PACKAGES (REMOVE IN FINAL) %
+\usepackage{blindtext} % Lorem Ipsum
+\usepackage{todonotes} % TODOs as useful reminders
+\setlength{\marginparwidth}{2cm} % Otherwise todonotes gets angry at me lol
+\setuptodonotes{fancyline, color=green!40, shadow} % TODOs options
+% HELPER PACKAGES (REMOVE IN FINAL) %
+
+\graphicspath{ {./res/} }
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\newgeometry{top=7cm, bottom=2cm} % Setting the margins for the title
+
+
+\thispagestyle{empty} % Removing header and footer
+
+% Title
+\begin{titlepage}
+    \centering
+    {\Huge\bfseries Pandemic Information System Model\par} % Project title
+    \vspace{1.5cm}
+    {\scshape\large Systems and Methods for Big and Unstructured Data \par} % Course
+    \vspace{0.5cm}
+    {\scshape\large Prof. Marco Brambilla \par} % Professor
+    \vspace{1cm}
+    {\scshape\large % Description
+        First delivery \par 
+        Neo4j Project \par 
+    }
+    \vspace{0.5cm}
+    {\slshape\large November 2021 \par} % Date
+    \vspace{1cm}
+    {\large\itshape % Authors
+        \todo{add personal codes}
+        Avci Oguzhan - \texttt{xxxxxxxx}\\
+        Gentile Nicole - \texttt{10594355}\\
+        Rigamonti Davide - \texttt{10629791}\\
+        Singh Raul - \texttt{xxxxxxxx}\\
+        Tagliaferri Mattia - \texttt{xxxxxxxx}\\
+    }
+    \vfill
+    \begin{figure}[b]
+        \includegraphics[scale=0.6]{polimi} % Polimi logo
+        \centering
+    \end{figure}
+
+\end{titlepage}
+
+\newgeometry{} % Resetting the margins
+
+\clearpage
+
+% INDEX
+\tableofcontents
+
+% LIST OF TODOs (REMOVE IN FINAL)
+\listoftodos
+
+\clearpage
+
+% INTRODUCTION
+\section{Introduction}
+
+\subsection{Problem Specification}
+
+We represented a population of XXX \todo{fill with population size} people in the USA.  
+The database receives data coming from an application that uses sensor to understand whether two people using the application had a contact; data includes date and time of the contact.  
+Some places, like restaurants, theaters and hospitals, collect date and name of visiting people. Moreover, hospitals also record people who are hospitalized for covid reasons. 
+The idea is to use this database so that, if a person gets positive, we can understand who are all people who had a contact with him/her. Data are recorded from 02/2020 and can be used for analytical purposes. 
+
+\subsection{Hypoteses}
+
+\blindtext
+
+\clearpage
+
+% DATABASE
+\section{Database}
+
+\subsection{ER Diagram}
+
+\blindtext
+
+\subsection{Dataset description}
+
+\blindtext
+
+\subsection{Queries}
+
+\blindtext
+
+\subsection{Commands}
+
+\blindtext
+
+\clearpage
+
+% APPLICATION
+\section{Application}
+
+\subsection{Description}
+
+\blindtext
+
+\subsection{User Guide}
+
+\blindtext
+
+\clearpage
+
+% REFERENCES AND SOURCES
+\section{References and sources}
+
+\blindtext
+
+\clearpage
+
+\end{document}
