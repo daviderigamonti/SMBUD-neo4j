@@ -1,11 +1,11 @@
 // PEOPLE:
-LOAD CSV WITH HEADERS FROM "file:///people.csv" AS row CREATE (:Person {name:row.first_name+ ' '+row.last_name,birthdate:date(row.birthdate),vaccine_date:date(row.vaccine_date),contagion_date:date(row.contagion_date),negative_test_date:date(row.negative_test_date)})
+LOAD CSV WITH HEADERS FROM "file:///people.csv" AS row CREATE (:Person {name:row.first_name+ ' '+row.last_name,email:row.email,ssn:row.ssn,birthdate:date(row.birthdate),vaccine_date:date(row.vaccine_date),contagion_date:date(row.contagion_date),negative_test_date:date(row.negative_test_date),healing_date:date(row.healing_date)});
 
 // LOCATION:
-LOAD CSV WITH HEADERS FROM "file:///locations.csv" AS row CREATE (:Location {name:row.Name, type:row.Type})
+LOAD CSV WITH HEADERS FROM "file:///locations.csv" AS row CREATE (:Location {name:row.Name, type:row.Type});
 
 // CITY
-LOAD CSV WITH HEADERS FROM "file:///cities.csv" AS row CREATE (:City {name:row.name})
+LOAD CSV WITH HEADERS FROM "file:///cities.csv" AS row CREATE (:City {name:row.name});
 
 // ASSEGNA A OGNI PERSONA UNA CITTà
 call apoc.periodic.iterate("
@@ -25,11 +25,11 @@ WITH collect(p) as people,c
 MATCH (p1:Person) where (p1)-[:LIVES_IN]->(c)
 WITH  p1,apoc.coll.randomItems(people, 3) as people
 where not p1 in people
-FOREACH (person in people | CREATE (p1)-[:FAMILY]->(person) CREATE (person)-[:FAMILY]->(p1) )
+FOREACH (person in people | CREATE (p1)-[:FAMILY]->(person) CREATE (person)-[:FAMILY]->(p1) );
 
 // QUERIES PER TROVARE DOPPIE RELAZIONI ED ELIMINARLE
 //match  (p)-[r:FAMILY]->(p1),(p)-[s:FAMILY]->(p1) where r<>s return p
-match  (p)-[r:FAMILY]->(p1),(p)-[s:FAMILY]->(p1) where r<>s delete r
+match  (p)-[r:FAMILY]->(p1),(p)-[s:FAMILY]->(p1) where r<>s delete r;
 
 // PEOPLE WHO MET BETWEEN 28/10/2021 AND 10/11/2021 (data coming from the application)
 call apoc.periodic.iterate("
@@ -87,7 +87,7 @@ MATCH (l:Location)
 WITH l, people, peopleRange
 WITH l, apoc.coll.randomItems(people, apoc.coll.randomItem(peopleRange)) as people
 // create relationships
-FOREACH (person IN people | CREATE (person)-[:WENT_TO {date: datetime({epochSeconds:toInteger(1631923200+rand()*2591940)})}]->(l))
+FOREACH (person IN people | CREATE (person)-[:WENT_TO {date: datetime({epochSeconds:toInteger(1631923200+rand()*2591940)})}]->(l));
 
 //Relazione Persone guarite --> Edifici:
 
@@ -98,7 +98,7 @@ MATCH (l:Location)
 WITH l, people, peopleRange
 WITH l, apoc.coll.randomItems(people, apoc.coll.randomItem(peopleRange)) as people
 // create relationships
-FOREACH (person IN people | CREATE (person)-[:WENT_TO {date: datetime({epochSeconds:toInteger(1631923200+rand()*5270340)})}]->(l))
+FOREACH (person IN people | CREATE (person)-[:WENT_TO {date: datetime({epochSeconds:toInteger(1631923200+rand()*5270340)})}]->(l));
 
 //RECOVERY RELATIONS
 
