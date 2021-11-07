@@ -11,5 +11,5 @@ WHERE   EXISTS((ph)-[:IS_HOSPITALIZED_IN]->(:Location {type:"Hospital"}))
 WITH    apoc.date.parse(toString(ph.birthdate), "d", "yyyy-MM-dd") AS ph_birth,
         now, pc_birth
 
-RETURN  avg((now-pc_birth)/365) AS infected, 
-        avg((now-ph_birth)/365) AS hospitalized;
+RETURN  avg((now-pc_birth)/365) AS avg_age_nothospitalized, 
+        avg((now-ph_birth)/365) AS avg_age_hospitalized;

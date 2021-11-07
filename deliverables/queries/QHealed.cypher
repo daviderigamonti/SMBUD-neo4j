@@ -5,5 +5,5 @@
 
 MATCH   (p:Person)
 WHERE   p.contagion_date IS NOT NULL AND p.healing_date IS NOT NULL AND
-        healing_date >= $date1 AND healing_date <= $date2
+        p.healing_date >= $date1 AND p.healing_date <= $date2
 RETURN  count(p);
