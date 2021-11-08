@@ -1,9 +1,9 @@
 // Registration of a positive COVID test
 
-:param name => "p";
+:param ssn => "id";
 :param test_date => datetime("x");
 
-MATCH (p {name: $name})
+MATCH (p {ssn: $ssn})
 WITH p,
     CASE 
         WHEN p.contagion_date IS NOT NULL THEN p.contagion_date
