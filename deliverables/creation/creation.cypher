@@ -31,6 +31,9 @@ FOREACH (person in people | CREATE (p1)-[:FAMILY]->(person) CREATE (person)-[:FA
 //match  (p)-[r:FAMILY]->(p1),(p)-[s:FAMILY]->(p1) where r<>s return p
 match  (p)-[r:FAMILY]->(p1),(p)-[s:FAMILY]->(p1) where r<>s delete r;
 
+// DELETE SELF-RELATION HAS_MET
+Match (p:Person)-[r:HAS_MET]->(p) delete r;
+
 // PEOPLE WHO MET BETWEEN 28/10/2021 AND 10/11/2021 (data coming from the application)
 call apoc.periodic.iterate("
 MATCH (h:Person)
