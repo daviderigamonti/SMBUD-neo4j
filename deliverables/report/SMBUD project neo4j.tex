@@ -7,6 +7,7 @@
 \usepackage{times} % Times New Roman font
 \usepackage{graphicx} % 'graphics' package interface
 \usepackage{geometry} % Edit document margins
+\usepackage{hyperref} % Table of contents hyperlinks
 
 % HELPER PACKAGES (REMOVE IN FINAL) %
 \usepackage{blindtext} % Lorem Ipsum
@@ -15,7 +16,14 @@
 \setuptodonotes{fancyline, color=green!40, shadow} % TODOs options
 % HELPER PACKAGES (REMOVE IN FINAL) %
 
-\graphicspath{ {./res/} }
+\graphicspath{ {./res/} } % Path to graphics
+\hypersetup{    % ToC Hyperlink setup
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
 
 %----------------------------------------------------------------------------------------
 %	DOCUMENT
@@ -24,9 +32,6 @@
 \begin{document}
 
 \newgeometry{top=7cm, bottom=2cm} % Setting the margins for the title
-
-
-\thispagestyle{empty} % Removing header and footer
 
 % Title
 \begin{titlepage}
@@ -50,7 +55,7 @@
         Gentile Nicole - \texttt{10594355}\\
         Rigamonti Davide - \texttt{10629791}\\
         Singh Raul - \texttt{xxxxxxxx}\\
-        Tagliaferri Mattia - \texttt{xxxxxxxx}\\
+        Tagliaferri Mattia - \texttt{xxxxxxxx}
     }
     \vfill
     \begin{figure}[b]
@@ -58,9 +63,12 @@
         \centering
     \end{figure}
 
+    \pagenumbering{gobble} % Remove page number
+
 \end{titlepage}
 
-\newgeometry{} % Resetting the margins
+\newgeometry{bottom=3cm} % Reset the margins
+\pagenumbering{arabic} % Reset the page number
 
 \clearpage
 
@@ -77,14 +85,53 @@
 
 \subsection{Problem Specification}
 
-We represented a population of XXX \todo{fill with population size} people in the USA.  
-The database receives data coming from an application that uses sensor to understand whether two people using the application had a contact; data includes date and time of the contact.  
-Some places, like restaurants, theaters and hospitals, collect date and name of visiting people. Moreover, hospitals also record people who are hospitalized for covid reasons. 
-The idea is to use this database so that, if a person gets positive, we can understand who are all people who had a contact with him/her. Data are recorded from 02/2020 and can be used for analytical purposes. 
+We represented a population of XXX \todo{fill with population size} people in 
+the USA. \\
+The database receives data coming from tracing applications that use sensor in 
+smartphones, wearable objects or other devices to understand whether two people 
+had a contact; data includes date and time of the contact. \\  
+Some places, like restaurants, theaters and hospitals, collect date and name of 
+visiting people. People can go to hospitals to make a visit (this is different 
+from hospitalization). Moreover, hospitals also record people who are 
+hospitalized for covid reasons. \\
+The idea is to use this database so that, if a person gets positive, we can 
+understand who are all people who had a contact with him/her. Contacts are of 
+different types: in family (since poeple from the same family are always in 
+contact), in a location (if someone is positive, we alert people who were in 
+the same location on the same day) or are given by an application using sensors. 
+Data are recorded from 02/2020 and can be used for analytical purposes. 
 
 \subsection{Hypoteses}
 
-\blindtext
+Vaccine date, date of the last contagion, date of the last negative test fields, 
+healing date are optional fields: a person is positive if the contagion date is 
+after the date of the last negative test; people can do tests without being 
+infected; people can decide not to get the vaccine; vaccinated people can get 
+infected; people who healed from covid can do tests after healing. \\
+We also assumed that people can get covid at most once (realistic if we consider 
+antibodies); in this way we can use data to build statistics. \\
+Members of a family are all the people who live together, relatives who see 
+each other very often or roommates. Obviously, all members of a family live in 
+the same city. \\
+When adding data about people going to places, we do not consider distances 
+between the city where they live in and the location they go to. So, they can 
+reach different places in different cities during the same day, assuming they 
+do this in different moments. \\
+Regarding places we have: people who got covid after 18/10 went to places from 
+18/09 to 17/10, since we assume that later they are in quarantine; all the 
+others went to visit locations from 18/09/2021 to 17/11/2021. We don’t retain 
+previous data since it is useless for the queries. Moreover, if a person becomes 
+positive, we alert all people who were in the same location in a span of time 
+going from one hour earlier to two hours later than when the person went 
+there. \\
+In this way we assume to alert all people in the location: the ones who went 
+there one hour earlier but are still there and the ones who arrived after the 
+infected. \\
+For simplicity, for people who are in hospital date of hospitalization and 
+contagion coincide; we also assume they leave the hospital on the healing 
+date. \\
+In order to populate the database, we imposed that every person visits from 6 
+to 10 locations. 
 
 \clearpage
 
@@ -97,7 +144,18 @@ The idea is to use this database so that, if a person gets positive, we can unde
 
 \subsection{Dataset description}
 
-\blindtext
+We used three types of nodes: Person, Location and City. 
+People are characterized by their name and surname, birthdate, city, email, social security number, vaccine date, date of the last contagion, date of the last negative test and healing date. People can be linked by family relationships.
+Locations have a name and a type (restaurant, theater, hospital); type is used so that the dataset can be easily expanded with new types of location.
+Possible relationships are: 
+\begin{itemize}
+	\item \texttt{WENT\char`_TO} to track people who visited a location at a certain time;
+	\item \texttt{IN\char`_FAMILY} for family relationships;
+	\item \texttt{IS\char`_IN} between locations and cities;
+	\item \texttt{LIVES\char`_IN} to link people to the city they live in;
+	\item \texttt{HAS\char`_MET} to indicate contacts between people using tracing app or devices;
+	\item \texttt{IS\char`_HOSPITALIZED\char`_IN} to indicate people who are/were hospitalized for covid reasons.
+\end{itemize}
 
 \subsection{Queries}
 
