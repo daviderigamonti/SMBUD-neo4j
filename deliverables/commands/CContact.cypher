@@ -5,17 +5,9 @@
 
 // :param name1 => "p1";
 // :param name2 => "p2";
-// :param date => date("d");
+// :param date => datetime("d");
 
 MATCH   (a:Person {name:$name1}), (b:Person {name:$name2})
 CREATE  (a)-[r:HAS_MET {date:$date}]->(b), 
         (b)-[r:HAS_MET {date:$date}]->(a);
-
-
-// Useful stuff 
-
-// :param date => datetime("d")
-// :param device => "dev"
-
-// CREATE  (a)-[r:HAS_MET {date:$date, device:$device}]->(b), 
-//         (b)-[r:HAS_MET {date:$date, device:$device}]->(a);
+        

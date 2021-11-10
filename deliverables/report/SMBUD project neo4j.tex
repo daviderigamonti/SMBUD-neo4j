@@ -103,35 +103,36 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
 
 \subsection{Hypoteses}
 
-Vaccine date, date of the last contagion, date of the last negative test fields, 
-healing date are optional fields: a person is positive if the contagion date is 
-after the date of the last negative test; people can do tests without being 
-infected; people can decide not to get the vaccine; vaccinated people can get 
-infected; people who healed from covid can do tests after healing. \\
-We also assumed that people can get covid at most once (realistic if we consider 
-antibodies); in this way we can use data to build statistics. \\
-Members of a family are all the people who live together, relatives who see 
-each other very often or roommates. Obviously, all members of a family live in 
-the same city. \\
-When adding data about people going to places, we do not consider distances 
-between the city where they live in and the location they go to. So, they can 
-reach different places in different cities during the same day, assuming they 
-do this in different moments. \\
-Regarding places we have: people who got covid after 18/10 went to places from 
-18/09 to 17/10, since we assume that later they are in quarantine; all the 
-others went to visit locations from 18/09/2021 to 17/11/2021. We don’t retain 
-previous data since it is useless for the queries. Moreover, if a person becomes 
-positive, we alert all people who were in the same location in a span of time 
-going from one hour earlier to two hours later than when the person went 
-there. \\
-In this way we assume to alert all people in the location: the ones who went 
-there one hour earlier but are still there and the ones who arrived after the 
-infected. \\
+\emph{Vaccine date}, \emph{date of the last contagion}, \emph{date of the last 
+negative test} and \emph{healing date} are optional fields. \\ 
+A person is considered either \emph{infected} if they have a contagion date, 
+\emph{healed} if they have an healing date and a contagion date or neither if 
+they have none yet. \\
+We assumed that people can do tests without being infected (or after healing) 
+and that people can decide not to get the vaccine but vaccinated people can 
+still get infected. \\
+We also assumed that people can get covid at most once (realistic if we 
+consider perfect antibodies), in this way it's easier to store and retrieve 
+data in order to build statistics. \\
+Members of a family are assumed to be all the people who live together, 
+relatives who see each other very often or roommates. Obviously, all members 
+of a family live in the same city and are considered "always in contact". \\
+When adding data about people going places, we do not consider distances 
+between the city where they live in and the location they go to, so they can 
+exist in different places at the same time. \todo{check if accesses from the same person can be generated at the same time} \\   
+\todo{is this still true?} 
+Regarding the places we have: people who got covid after 18/10 went to places 
+from 18/09/2021 to 17/10/2021, since we assume that later they are in 
+quarantine; all the others went to visit locations from 18/09/2021 to 
+17/11/2021. 
+If a person becomes positive, we alert all people who were in the same location
+in a 4 hour span of time centered on the time of arrival of the infected
+person. \\
 For simplicity, for people who are in hospital date of hospitalization and 
 contagion coincide; we also assume they leave the hospital on the healing 
-date. \\
+date. \todo{is this still true?} \\
 In order to populate the database, we imposed that every person visits from 6 
-to 10 locations. 
+to 10 locations.\todo{we could add more} 
 
 \clearpage
 
