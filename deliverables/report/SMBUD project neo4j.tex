@@ -144,16 +144,23 @@ to 10 locations.\todo{we could add more}
 \subsection{Dataset description}
 
 We used three types of nodes: Person, Location and City. 
-People are characterized by their name and surname, birthdate, city, email, social security number, vaccine date, date of the last contagion, date of the last negative test and healing date. People can be linked by family relationships.
-Locations have a name and a type (restaurant, theater, hospital); type is used so that the dataset can be easily expanded with new types of location.
+People are characterized by their name (composed by name and surname), 
+birthdate, city, email, social security number, vaccine date, date of the last 
+contagion, date of the last negative test and healing date. \\
+Locations have a name and a type (restaurant, theater, hospital); 
+type is used so that the dataset can be easily expanded with new types of 
+location. \\
 Possible relationships are: 
 \begin{itemize}
-	\item \texttt{WENT\char`_TO} to track people who visited a location at a certain time;
+    \item \texttt{WENT\char`_TO} to track people who visited a location at a 
+        certain time;
 	\item \texttt{IN\char`_FAMILY} for family relationships;
 	\item \texttt{IS\char`_IN} between locations and cities;
 	\item \texttt{LIVES\char`_IN} to link people to the city they live in;
-	\item \texttt{HAS\char`_MET} to indicate contacts between people using tracing app or devices;
-	\item \texttt{IS\char`_HOSPITALIZED\char`_IN} to indicate people who are/were hospitalized for covid reasons.
+    \item \texttt{HAS\char`_MET} to indicate contacts between people using 
+        tracing app or devices;
+    \item \texttt{IS\char`_HOSPITALIZED\char`_IN} to indicate people who 
+        are/were hospitalized for covid reasons.
 \end{itemize}
 
 \subsection{Queries}
