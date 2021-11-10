@@ -2,6 +2,6 @@
 
 :param date => date("x");
 
-MATCH (p:Person)-[r:HOSPITALIZED_IN]->(h:Location)
+MATCH (p:Person)-[r:IS_HOSPITALIZED_IN]->(h:Location)
 WHERE $date >= r.date AND $date <= p.healing_date
 RETURN count(*)
