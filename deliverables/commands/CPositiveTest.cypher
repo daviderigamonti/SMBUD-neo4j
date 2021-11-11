@@ -1,7 +1,7 @@
 // Registration of a positive COVID test
 
-:param ssn => "id";
-:param test_date => datetime("x");
+// :param ssn => "id";
+// :param test_date => datetime("x");
 
 MATCH (p {ssn: $ssn})
 WITH p,
@@ -10,4 +10,4 @@ WITH p,
         ELSE $test_date
     END 
     AS infection
-SET p.contagion_date = infection
+SET p.contagion_date = infection;

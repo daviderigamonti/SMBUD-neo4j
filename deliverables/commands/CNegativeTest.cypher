@@ -1,7 +1,7 @@
 // Registration of a negative COVID test
 
-:param ssn => "id";
-:param test_date => datetime("x");
+// :param ssn => "id";
+// :param test_date => datetime("x");
 
 MATCH (p {ssn: $ssn})
 WITH p,
@@ -11,4 +11,4 @@ WITH p,
     END 
     AS healing
 
-SET p.negative_test_date = $test_date, p.healing_date = healing
+SET p.negative_test_date = $test_date, p.healing_date = healing;

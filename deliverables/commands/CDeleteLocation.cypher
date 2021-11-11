@@ -1,6 +1,6 @@
 // Delete a location
 
-:param name => "n";
+// :param name => "n";
 
 MATCH(n:Location {name: $name}) 
-DETACH DELETE n
+DETACH DELETE n;

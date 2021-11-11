@@ -6,6 +6,6 @@
 // :param device => "d";
 
 MATCH   (a:Person {ssn:$ssn1}), (b:Person {ssn1:$ssn2})
-CREATE  (a)-[r:HAS_MET {date:$date}, {device:$device}]->(b), 
-        (b)-[r:HAS_MET {date:$date}, {device:$device}]->(a);
+CREATE  (a)-[r:HAS_MET {date:$date, device:$device}]->(b), 
+        (b)-[r:HAS_MET {date:$date, device:$device}]->(a);
         

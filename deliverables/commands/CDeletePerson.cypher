@@ -1,6 +1,6 @@
 // Delete a person node
 
-:param ssn => "id";
+// :param ssn => "id";
 
 MATCH(n {ssn: $ssn}) 
-DETACH DELETE n
+DETACH DELETE n;

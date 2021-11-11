@@ -11,4 +11,4 @@ WITH    apoc.date.add(p1_contagion_date, "ms", -14, "d") AS contagion_l,
         met, p1_healing_date
 WHERE   met.date.EpochMillis >= contagion_l AND
         (p1_healing_date IS NULL OR met.date.EpochMillis < p1_healing_date)
-RETURN  met.device, count(DISTINCT met) AS infected_contacts
+RETURN  met.device, count(DISTINCT met) AS infected_contacts;
