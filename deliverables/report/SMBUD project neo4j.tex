@@ -86,52 +86,50 @@
 
 \subsection{Problem Specification}
 
-We represented a population of XXX \todo{fill with population size} people in 
+We represented a population of 800 people in 
 the USA. \\
-The database receives data coming from tracing applications that use sensor in 
+The database receives data coming from tracking applications that use sensors in 
 smartphones, wearable objects or other devices to understand whether two people 
 had a contact; data includes date and time of the contact. \\  
-Some places, like restaurants, theaters and hospitals, collect date and name of 
+Moreover, some places like restaurants, theaters and hospitals, explicitly collect date and name of 
 visiting people. \\
 The idea is to use this database so that, if a person gets positive, we can 
 understand who are all people who had a contact with him/her. Contacts are of 
 different types: in family (since people from the same family are always in 
 contact), in a location (if someone is positive, we alert people who were in 
-the same location on the same day) or are given by an application using sensors. 
+the same location on the same day) or are given by tracking applications. 
 Data are recorded from 02/2020 and can be used for analytical purposes. 
 
 \subsection{Hypoteses}
 
 \emph{Vaccine date}, \emph{date of the last contagion}, \emph{date of the last 
 negative test} and \emph{healing date} are optional fields. \\ 
-A person is considered either \emph{infected} if they have a contagion date, 
+People are considered either \emph{infected} if they have a contagion date, 
 \emph{healed} if they have an healing date and a contagion date or neither if 
 they have none yet. \\
 We assumed that people can do tests without being infected (or after healing) 
-and that people can decide not to get the vaccine but vaccinated people can 
+and that they can decide not to get the vaccine; however, vaccinated people can 
 still get infected. \\
 We also assumed that people can get covid at most once (realistic if we 
-consider perfect antibodies), in this way it's easier to store and retrieve 
+consider perfect antibodies); in this way it's easier to store and retrieve 
 data in order to build statistics. \\
 Members of a family are assumed to be all the people who live together, 
 relatives who see each other very often or roommates. Obviously, all members 
-of a family live in the same city and are considered "always in contact". \\
+of a family live in the same city and are considered "always in contact". \\  
+In order to populate the database, we imposed that every person visits from 6 
+to 10 locations. In particular, we have: people who got covid after 18/10 went to places 
+from 18/09/2021 to 17/10/2021 (since we assume that later they are in 
+quarantine); all the others went to visit locations from 18/09/2021 to 
+17/11/2021. 
 When adding data about people going places, we do not consider distances 
 between the city where they live in and the location they go to, so they can 
-exist in different places at the same time. \todo{check if accesses from the same person can be generated at the same time} \\   
-\todo{is this still true?} 
-Regarding the places we have: people who got covid after 18/10 went to places 
-from 18/09/2021 to 17/10/2021, since we assume that later they are in 
-quarantine; all the others went to visit locations from 18/09/2021 to 
-17/11/2021. 
-If a person becomes positive, we alert all people who were in the same location
+be in different places almost at the same time. \\ 
+If a person becomes positive, we alert: all people who were in the same location
 in a 4 hour span of time centered on the time of arrival of the infected
-person. \\
-For simplicity, for people who are in hospital date of hospitalization and 
-contagion coincide; we also assume they leave the hospital on the healing 
-date. \todo{is this still true?} \\
-In order to populate the database, we imposed that every person visits from 6 
-to 10 locations.\todo{we could add more} 
+person; all the family members (since they are always in contact with each other); 
+all the people met using the tracking application. \\
+We assumed that people can go to hospitals for two reasons: for an appointment/visit or if they are hospitalized because of covid. For simplicity, for people who are hospitalized, date of hospitalization and 
+contagion coincide; we also assumed they leave the hospital on the healing date.  \\
 
 \clearpage
 
@@ -194,7 +192,23 @@ and hospitalized people inside the database.
 
 \subsubsection{Cities}
 
-\todo{cities query}
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH (cities:City)<-[LIVES_IN]-(person:Person) 
+WHERE person.contagion_date >= $date1 AND person.contagion_date <= $date2
+WITH cities, count(*) AS infected
+ORDER BY infected DESC
+RETURN cities.name, infected
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Return cities and the number of infected people in a given span of time. Results are sorted by the number of infected people. 
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$date1} \emph{(datetime)}:  starting date;
+    \item \texttt{\$date2} \emph{(datetime)}: ending date.
+\end{itemize}
 
 \subsubsection{Devices}
 
@@ -244,12 +258,40 @@ Returns the number of contacts registered for each type of device.
 % \subsubsection{Hospitalized}
 
 \subsubsection{Infected}
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH   (p:Person)
+WHERE   p.contagion_date IS NOT NULL AND
+        p.contagion_date >= $date1 AND p.contagion_date <= $date2
+RETURN  count(p);
+    \end{verbatim}
+\end{tcolorbox}
 
-\todo{infected query}
+\noindent % Removes indentation after box
+Returns the number of infected people over a given span of time. \\
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$date1} \emph{(date)}: starting date;\todo{nella query è un datetime, ma dovrebbe essere date}
+    \item \texttt{\$date2} \emph{(date)}: ending date.
+\end{itemize}
 
 \subsubsection{Locations}
-
-\todo{locations query}
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH (places:Location)<-[r:WENT_TO]-(person:Person)
+WHERE $date1 <= r.date AND r.date <= $date2
+WITH places, count(*) AS infected
+ORDER BY infected DESC
+RETURN places.name, infected
+    \end{verbatim}
+\end{tcolorbox}
+\noindent % Removes indentation after box
+Returns locations and the corresponding number of people who went there and possibly got infected in a certain span of time. Results are sorted according to the number of visits. \\
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$date1} \emph{(datetime)}: starting date;
+    \item \texttt{\$date2} \emph{(datetime)}: ending date.
+\end{itemize}
 
 \subsubsection{Notifications}
 
@@ -311,7 +353,7 @@ RETURN DISTINCT contact, collect({tracing:tracing, time:time}) AS info
 
 \noindent % Removes indentation after box
 Returns a list of people that a specific infected person (given their 
-\emph{social security number}) may have been in contact with; considering 
+\emph{social security number}) may has been in contact with, considering 
 family relationships, contacts from device tracking and inferred contacts from
 explicit data collection in specific locations. \\
 For each contact we offer complete information on the person that came in 
@@ -324,8 +366,22 @@ Takes the following parameters:
 \end{itemize}
 
 \subsubsection{Vaccinated}
-
 \todo{vaccinated query (one of the two)}
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH (p:Person)
+WHERE p.contagion_date >= p.vaccine_date
+WITH count(*) AS vaccinated
+MATCH (p1: Person)
+WHERE p1.contagion_date IS NOT NULL
+RETURN (toFloat(vaccinated)/count(*))*100
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Returns the percentage of vaccinated infected people over the total 
+number of infected (considering also the non-vaccinated).
+
 
 \subsection{Commands}
 
@@ -356,11 +412,49 @@ Takes the following parameters:
 
 \subsubsection{Negative test}
 
-\todo{negative test command}
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH (p {ssn: $ssn})
+WITH p,
+    CASE 
+        WHEN p.healing_date IS NULL AND p.contagion_date IS NOT NULL THEN $test_date
+        ELSE p.healing_date
+    END 
+    AS healing
+SET p.negative_test_date = $test_date, p.healing_date = healing
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Registration of a negative COVID test. It updates the date of the last negative test of the person with the given SSN; if the person was infected, the healing date is updated with the date of the test, otherwise it is not changed.
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$ssn} \emph{(string)}: social security number;
+    \item \texttt{\$test\_date} \emph{(date)}: date of the negative test.\todo{nella query è un datetime, ma dovrebbe essere date}
+
+\end{itemize}
 
 \subsubsection{Positive test}
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH (p {ssn: $ssn})
+WITH p,
+    CASE 
+        WHEN p.contagion_date IS NOT NULL THEN p.contagion_date
+        ELSE $test_date
+    END 
+    AS infection
+SET p.contagion_date = infection
+    \end{verbatim}
+\end{tcolorbox}
 
-\todo{positive test command}
+\noindent % Removes indentation after box
+Registration of a positive COVID test. The contagion date is set equal to the test date, considering that if a person got covid, he/she cannot get it again (in this case the contagion date is not updated).
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$ssn} \emph{(string)}: social security number;
+    \item \texttt{\$test\_date} \emph{(date)}: date of the positive test.\todo{nella query è un datetime, ma dovrebbe essere date}
+\end{itemize}
 
 \clearpage
 
