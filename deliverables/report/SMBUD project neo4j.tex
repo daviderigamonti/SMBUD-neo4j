@@ -9,6 +9,7 @@
 \usepackage{geometry} % Edit document margins
 \usepackage{hyperref} % Table of contents hyperlinks
 \usepackage{tcolorbox} % Colored boxes for code
+\usepackage[font=small, labelfont=bf]{caption} % Image caption font
 
 % HELPER PACKAGES (REMOVE IN FINAL) %
 \usepackage{blindtext} % Lorem Ipsum
@@ -60,7 +61,7 @@
     }
     \vfill
     \begin{figure}[b]
-        \includegraphics[scale=0.6]{polimi} % Polimi logo
+        \includegraphics[scale=0.6]{polimi.png} % Polimi logo
         \centering
     \end{figure}
 
@@ -132,7 +133,7 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
             up to 14 days prior the positive test. 
     \end{itemize}
 
-    \vfill  % Impagination filler
+    \vfill  % Impagination fillerH
 
     \item DB population
     \begin{itemize}
@@ -151,8 +152,7 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
         \item[] In order to simplify data access we assumed that, for people who
             are hospitalized, date of hospitalization and contagion coincide 
             and they leave the hospital on the healing date.
-        \item[] We assumed that all location names are unique, therefore a 
-            \texttt{MATCH} on the name of a location will always return one node. 
+        \item[] We also assumed that all cities andlocation names are unique.
     \end{itemize}
 
 \end{itemize}
@@ -164,7 +164,36 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
 
 \subsection{ER Diagram}
 
-\blindtext
+\begin{figure}[h]
+    \makebox[\textwidth][c]{ % Box to properly center the image
+        \includegraphics[scale=0.6]{er_diagram.png} % ER diagram
+    }
+    \caption*{The diagram represents the first phase of the database design.} % Caption
+\end{figure}
+
+\noindent % Removes indentation after the image
+The diagram per se should be already auto-explicative. However, for better 
+clarity, a more detailed description of each entity along with reasons of why 
+such elements should be present in the database is provided:
+
+\begin{itemize}
+    \item \texttt{Person}: it contains information that allows the system to
+        keep track of the users and perform analytics on them.  
+    \item \texttt{City}: it contains information regarding cities that are
+        present in the system. It can be useful to check where a person lives
+        or a location resides in order to aggregate useful data.
+    \item \texttt{Location}: it contains information regarding buildings that 
+        are present in the system and where people can be tracked explicitly. 
+        In the implementation, the various specializations of the 
+        \emph{Location} "relation" were merged into the parent with the help
+        of an attribute named \texttt{type}.
+    \item \texttt{Hospital}: it is a specialization of the location entity. 
+        Given the current emergency, hospitals can offer hospitalization rooms 
+        for patients with \emph{COVID-19} but can also be visited like other 
+        locations. 
+    \item \texttt{Restaurant}: it is a specialization of the location entity. 
+    \item \texttt{Theatre}: it is a specialization of the location entity.  
+\end{itemize}
 
 \subsection{Dataset description}
 
