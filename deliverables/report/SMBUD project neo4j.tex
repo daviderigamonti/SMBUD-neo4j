@@ -87,18 +87,28 @@
 
 \subsection{Problem Specification}
 
-We represented a population of 800 people in the USA. \\
+The scope of this project is to build the structure for an information system 
+capable of managing pandemic information for a given country. \\
+Even though there are no direct names in the given specific, we can assume 
+without loss of generality, that the "pandemic" is referring to the 
+\emph{COVID-19} pandemic (the country that we will take into consideration 
+is the \emph{USA}). \\
 The database receives data coming from tracking applications that use sensors in 
 smartphones, wearable objects or other devices to understand whether two people 
 had a contact; data includes date and time of the contact. \\  
 Moreover, some places like restaurants, theaters and hospitals, explicitly 
 collect date and name of visiting people. \\
-The idea is to use this database so that, if a person gets positive, we can 
-understand who are all people who had a contact with him/her. Contacts are of 
-different types: in family (since people from the same family are always in 
-contact), in a location (if someone is positive, we alert people who were in 
-the same location on the same day) or are given by tracking applications. 
-Data are recorded from 02/2020 and can be used for analytical purposes. 
+The idea is to use the system so that, if a person gets flagged as 
+\emph{infected}, we can understand who are all the people who had a contact 
+with them and, in the meantime, build useful analytics with the gathered 
+information. \\
+Contacts can be of 3 different types: 
+\begin{itemize}
+    \item between familiars;
+    \item between people that went to the same location considering a reasonable 
+        span of time between their accesses;
+    \item given by a tracking application.
+\end{itemize}
 
 \subsection{Hypoteses}
 
@@ -115,6 +125,9 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
         \item[] We also assumed that people can get covid at most once 
             (realistic if we consider perfect antibodies); in this way it's 
             easier to store and retrieve data in order to build statistics.
+        \item[] Given the previous assumptions we consider reasonable to only
+            store the date of the last negative test and that consider all 
+            vaccines as single-dose generic vaccines.
     \end{itemize}
 
     \item Tracking
@@ -126,14 +139,12 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
         \item[] The tracking relationships assume that different devices can 
             only see each other if they are of the same \emph{device type}.
         \item[] We assume that the tracking devices only function outside 
-            houses therefore contacts between members of the same family 
+            houses, therefore contacts between members of the same family 
             (unless they meet outside) and contacts between people inside the
             same location at the same time won't be tracked.
         \item[] For tracking purposes, a person is considered \emph{infected}
             up to 14 days prior the positive test. 
     \end{itemize}
-
-    \vfill  % Impagination fillerH
 
     \item DB population
     \begin{itemize}
@@ -143,12 +154,12 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
             17/10/2021 (since we assume that after a positive test they are put 
             in quarantine) and all the others went to visit locations from 
             18/09/2021 to 17/11/2021. 
-        \item[] When adding data about people visiting locations there may be
-            some temporal/spatial inconsistencies due to the generation method,
-            these will be overlooked since they are not crucial to the scope of
-            this project. 
+        \item[] There may be some temporal/spatial inconsistencies inside the 
+            generated dataset, these will be overlooked since they are not 
+            crucial to the scope of this project. 
         \item[] We assumed that people can go to hospitals for two reasons: for
-            an appointment/visit or if they are hospitalized because of covid.
+            an appointment/visit or if they are hospitalized because of 
+            \emph{COVID-19}.
         \item[] In order to simplify data access we assumed that, for people who
             are hospitalized, date of hospitalization and contagion coincide 
             and they leave the hospital on the healing date.
@@ -164,6 +175,7 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
 
 \subsection{ER Diagram}
 
+\todo{English writing of theater in ER diagram}
 \begin{figure}[h]
     \makebox[\textwidth][c]{ % Box to properly center the image
         \includegraphics[scale=0.6]{er_diagram.png} % ER diagram
@@ -192,18 +204,20 @@ such elements should be present in the database is provided:
         for patients with \emph{COVID-19} but can also be visited like other 
         locations. 
     \item \texttt{Restaurant}: it is a specialization of the location entity. 
-    \item \texttt{Theatre}: it is a specialization of the location entity.  
+    \item \texttt{Theater}: it is a specialization of the location entity.  
 \end{itemize}
 
 \subsection{Dataset description}
 
+We represented a population of 800 people in the USA, considering xxx locations
+between xx cities; data is recorded from February 2020. \todo{fill with db data} \\ 
 We used three types of nodes: Person, Location and City. 
 People are characterized by their name (composed by name and surname), 
 birthdate, city, email, social security number, vaccine date, date of the last 
 contagion, date of the last negative test and healing date. \\
 Locations have a name and a type (restaurant, theater, hospital); 
 type is used so that the dataset can be easily expanded with new types of 
-location. \\
+locations. \\
 Possible relationships are: 
 \begin{itemize}
     \item \texttt{WENT\char`_TO} to track people who visited a location at a 
@@ -217,9 +231,14 @@ Possible relationships are:
         are/were hospitalized for covid reasons.
 \end{itemize}
 
+\noindent % Removes indentation after list
+The complete script used for the creation of the database, togheter with a 
+database dump will be provided alongside this document.
+
 \subsection{Queries}
 
-Only the most significative queries are shown in this document.
+Only the most significative queries are shown in this document. \\
+All the implemented queries will be provided alongside this document.
 
 \subsubsection{Average age}
 
@@ -418,7 +437,8 @@ number of infected (considering also the non-vaccinated).
 
 \subsection{Commands}
 
-Only the most significative commands are shown in this document.
+Only the most significative commands are shown in this document. \\
+All the implemented commands will be provided alongside this document.
 
 \subsubsection{Contact}
 
