@@ -86,13 +86,12 @@
 
 \subsection{Problem Specification}
 
-We represented a population of 800 people in 
-the USA. \\
+We represented a population of 800 people in the USA. \\
 The database receives data coming from tracking applications that use sensors in 
 smartphones, wearable objects or other devices to understand whether two people 
 had a contact; data includes date and time of the contact. \\  
-Moreover, some places like restaurants, theaters and hospitals, explicitly collect date and name of 
-visiting people. \\
+Moreover, some places like restaurants, theaters and hospitals, explicitly 
+collect date and name of visiting people. \\
 The idea is to use this database so that, if a person gets positive, we can 
 understand who are all people who had a contact with him/her. Contacts are of 
 different types: in family (since people from the same family are always in 
@@ -103,7 +102,7 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
 \subsection{Hypoteses}
 
 \emph{Vaccine date}, \emph{date of the last contagion}, \emph{date of the last 
-negative test} and \emph{healing date} are optional fields. \\ 
+negative test} and \emph{healing date} are optional fields. \\
 People are considered either \emph{infected} if they have a contagion date, 
 \emph{healed} if they have an healing date and a contagion date or neither if 
 they have none yet. \\
@@ -128,8 +127,10 @@ If a person becomes positive, we alert: all people who were in the same location
 in a 4 hour span of time centered on the time of arrival of the infected
 person; all the family members (since they are always in contact with each other); 
 all the people met using the tracking application. \\
-We assumed that people can go to hospitals for two reasons: for an appointment/visit or if they are hospitalized because of covid. For simplicity, for people who are hospitalized, date of hospitalization and 
-contagion coincide; we also assumed they leave the hospital on the healing date.  \\
+We assumed that people can go to hospitals for two reasons: for an 
+appointment/visit or if they are hospitalized because of covid. For simplicity, 
+for people who are hospitalized, date of hospitalization and contagion coincide;
+we also assumed they leave the hospital on the healing date.  
 
 \clearpage
 
@@ -206,7 +207,7 @@ RETURN cities.name, infected
 Return cities and the number of infected people in a given span of time. Results are sorted by the number of infected people. 
 Takes the following parameters: 
 \begin{itemize}
-    \item \texttt{\$date1} \emph{(datetime)}:  starting date; \todo{datetime al posto di date}
+    \item \texttt{\$date1} \emph{(datetime)}: starting date;
     \item \texttt{\$date2} \emph{(datetime)}: ending date.
 \end{itemize}
 
@@ -235,28 +236,6 @@ RETURN  met.device, count(DISTINCT met) AS infected_contacts;
 \noindent % Removes indentation after box
 Returns the number of contacts registered for each type of device.
 
-% \subsubsection{Healed}
-
-% \begin{tcolorbox}[fontupper=\scriptsize]
-%     \begin{verbatim}
-% MATCH   (p:Person)
-% WHERE   p.contagion_date IS NOT NULL AND p.healing_date IS NOT NULL AND
-%         p.healing_date >= $date1 AND p.healing_date <= $date2
-% RETURN  count(p);
-%     \end{verbatim}
-% \end{tcolorbox}
-
-% \noindent % Removes indentation after box
-% Returns the number of healed people over a given span of time. \\
-% Takes the following parameters: 
-% \begin{itemize}
-%     \item \texttt{\$date1} \emph{(date)}: starting date;
-% 	\item \texttt{\$date2} \emph{(date)}: ending date.
-% \end{itemize}
-
-
-% \subsubsection{Hospitalized}
-
 \subsubsection{Infected}
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
@@ -271,7 +250,7 @@ RETURN  count(p);
 Returns the number of infected people over a given span of time. \\
 Takes the following parameters: 
 \begin{itemize}
-    \item \texttt{\$date1} \emph{(date)}: starting date;\todo{nella query è un datetime, ma dovrebbe essere date}
+    \item \texttt{\$date1} \emph{(date)}: starting date;
     \item \texttt{\$date2} \emph{(date)}: ending date.
 \end{itemize}
 
@@ -366,7 +345,7 @@ Takes the following parameters:
 \end{itemize}
 
 \subsubsection{Vaccinated}
-\todo{vaccinated query (one of the two)}
+
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
 MATCH (p:Person)
@@ -417,7 +396,8 @@ Takes the following parameters:
 MATCH (p {ssn: $ssn})
 WITH p,
     CASE 
-        WHEN p.healing_date IS NULL AND p.contagion_date IS NOT NULL THEN $test_date
+        WHEN p.healing_date IS NULL AND p.contagion_date IS NOT NULL 
+        THEN $test_date
         ELSE p.healing_date
     END 
     AS healing
@@ -430,7 +410,7 @@ Registration of a negative COVID test. It updates the date of the last negative 
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number;
-    \item \texttt{\$test\_date} \emph{(date)}: date of the negative test.\todo{nella query è un datetime, ma dovrebbe essere date}
+    \item \texttt{\$test\_date} \emph{(date)}: date of the negative test.
 
 \end{itemize}
 
@@ -453,7 +433,7 @@ Registration of a positive COVID test. The contagion date is set equal to the te
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number;
-    \item \texttt{\$test\_date} \emph{(date)}: date of the positive test.\todo{nella query è un datetime, ma dovrebbe essere date}
+    \item \texttt{\$test\_date} \emph{(date)}: date of the positive test.
 \end{itemize}
 
 \clearpage

@@ -1,7 +1,7 @@
 // Registration of a positive COVID test
 
 // :param ssn => "id";
-// :param test_date => datetime("x");
+// :param test_date => date("x");
 
 MATCH (p {ssn: $ssn})
 WITH p,
