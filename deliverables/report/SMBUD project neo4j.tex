@@ -101,37 +101,62 @@ Data are recorded from 02/2020 and can be used for analytical purposes.
 
 \subsection{Hypoteses}
 
-\emph{Vaccine date}, \emph{date of the last contagion}, \emph{date of the last 
-negative test} and \emph{healing date} are optional fields. \\
-People are considered either \emph{infected} if they have a contagion date, 
-\emph{healed} if they have an healing date and a contagion date or neither if 
-they have none yet. \\
-We assumed that people can do tests without being infected (or after healing) 
-and that they can decide not to get the vaccine; however, vaccinated people can 
-still get infected. \\
-We also assumed that people can get covid at most once (realistic if we 
-consider perfect antibodies); in this way it's easier to store and retrieve 
-data in order to build statistics. \\
-Members of a family are assumed to be all the people who live together, 
-relatives who see each other very often or roommates. Obviously, all members 
-of a family live in the same city and are considered "always in contact". \\  
-In order to populate the database, we imposed that every person visits from 6 
-to 10 locations. In particular, we have: people who got covid after 18/10 went to places 
-from 18/09/2021 to 17/10/2021 (since we assume that later they are in 
-quarantine); all the others went to visit locations from 18/09/2021 to 
-17/11/2021. 
-When adding data about people going places, we do not consider distances 
-between the city where they live in and the location they go to, so they can 
-be in different places almost at the same time. \\ 
-If a person becomes positive, we alert: all people who were in the same location
-in a 4 hour span of time centered on the time of arrival of the infected
-person; all the family members (since they are always in contact with each other); 
-all the people met using the tracking application. \\
-We assumed that people can go to hospitals for two reasons: for an 
-appointment/visit or if they are hospitalized because of covid. For simplicity, 
-for people who are hospitalized, date of hospitalization and contagion coincide;
-we also assumed they leave the hospital on the healing date.  
+\begin{itemize}
 
+    \item Infection
+    \begin{itemize}
+        \item[] People are considered either \emph{infected} if they have a 
+            contagion date, \emph{healed} if they have an healing date and a 
+            contagion date, or neither if they have none yet.
+        \item[] We assumed that people can do tests without being infected 
+            (or after healing) and that they can decide not to get the vaccine;
+            however, vaccinated people can still get infected.
+        \item[] We also assumed that people can get covid at most once 
+            (realistic if we consider perfect antibodies); in this way it's 
+            easier to store and retrieve data in order to build statistics.
+    \end{itemize}
+
+    \item Tracking
+    \begin{itemize}
+        \item[] Members of a family are assumed to be all the people who live 
+            together, relatives who see each other very often or roommates. 
+            Obviously, all members of a family live in the same city and are 
+            considered "always in contact".
+        \item[] The tracking relationships assume that different devices can 
+            only see each other if they are of the same \emph{device type}.
+        \item[] We assume that the tracking devices only function outside 
+            houses therefore contacts between members of the same family 
+            (unless they meet outside) and contacts between people inside the
+            same location at the same time won't be tracked.
+        \item[] For tracking purposes, a person is considered \emph{infected}
+            up to 14 days prior the positive test. 
+    \end{itemize}
+
+    \vfill  % Impagination filler
+
+    \item DB population
+    \begin{itemize}
+        \item[] In order to populate the database, we imposed that every person 
+            visits from 6 to 10 locations, in particular we have people who 
+            got covid after 18/10 and went visiting places from 18/09/2021 to 
+            17/10/2021 (since we assume that after a positive test they are put 
+            in quarantine) and all the others went to visit locations from 
+            18/09/2021 to 17/11/2021. 
+        \item[] When adding data about people visiting locations there may be
+            some temporal/spatial inconsistencies due to the generation method,
+            these will be overlooked since they are not crucial to the scope of
+            this project. 
+        \item[] We assumed that people can go to hospitals for two reasons: for
+            an appointment/visit or if they are hospitalized because of covid.
+        \item[] In order to simplify data access we assumed that, for people who
+            are hospitalized, date of hospitalization and contagion coincide 
+            and they leave the hospital on the healing date.
+        \item[] We assumed that all location names are unique, therefore a 
+            \texttt{MATCH} on the name of a location will always return one node. 
+    \end{itemize}
+
+\end{itemize}
+  
 \clearpage
 
 % DATABASE
