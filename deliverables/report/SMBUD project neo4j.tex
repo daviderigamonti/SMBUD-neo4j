@@ -53,7 +53,7 @@
     \vspace{1cm}
     {\large\itshape % Authors
         \todo{add personal codes}
-        Avci Oguzhan - \texttt{xxxxxxxx}\\
+        Avci Oguzhan - \texttt{10557284}\\
         Gentile Nicole - \texttt{10594355}\\
         Rigamonti Davide - \texttt{10629791}\\
         Singh Raul - \texttt{xxxxxxxx}\\
@@ -150,7 +150,7 @@ Contacts can be of 3 different types:
     \begin{itemize}
         \item[] In order to populate the database, we imposed that every person 
             visits from 6 to 10 locations, in particular we have people who 
-            got covid after 18/10 and went visiting places from 18/09/2021 to 
+            got covid after 18/10/2021 and went visiting places from 18/09/2021 to 
             17/10/2021 (since we assume that after a positive test they are put 
             in quarantine) and all the others went to visit locations from 
             18/09/2021 to 17/11/2021. 
@@ -163,7 +163,7 @@ Contacts can be of 3 different types:
         \item[] In order to simplify data access we assumed that, for people who
             are hospitalized, date of hospitalization and contagion coincide 
             and they leave the hospital on the healing date.
-        \item[] We also assumed that all cities andlocation names are unique.
+        \item[] We also assumed that all cities and location names are unique.
     \end{itemize}
 
 \end{itemize}
@@ -209,8 +209,8 @@ such elements should be present in the database is provided:
 
 \subsection{Dataset description}
 
-We represented a population of 800 people in the USA, considering xxx locations
-between xx cities; data is recorded from February 2020. \todo{fill with db data} \\ 
+We represented a population of 800 people in the USA, considering 400 locations
+between 48 cities; data is recorded from February 2020.  \\ 
 We used three types of nodes: Person, Location and City. 
 People are characterized by their name (composed by name and surname), 
 birthdate, city, email, social security number, vaccine date, date of the last 
@@ -222,7 +222,7 @@ Possible relationships are:
 \begin{itemize}
     \item \texttt{WENT\char`_TO} to track people who visited a location at a 
         certain time;
-	\item \texttt{IN\char`_FAMILY} for family relationships;
+	\item \texttt{FAMILY} for family relationships;
 	\item \texttt{IS\char`_IN} between locations and cities;
 	\item \texttt{LIVES\char`_IN} to link people to the city they live in;
     \item \texttt{HAS\char`_MET} to indicate contacts between people using 
