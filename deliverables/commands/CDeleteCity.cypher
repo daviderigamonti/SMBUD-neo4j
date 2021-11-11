@@ -1,6 +1,6 @@
 // Delete a City
 
-:param name => "n";
+// :param name => "n";
 
 MATCH(n:City {name: $name}) 
-DETACH DELETE n
+DETACH DELETE n;

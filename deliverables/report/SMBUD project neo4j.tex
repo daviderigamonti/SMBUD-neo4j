@@ -214,7 +214,7 @@ WITH    apoc.date.add(p1_contagion_date, "ms", -14, "d") AS contagion_l,
         met, p1_healing_date
 WHERE   met.date.EpochMillis >= contagion_l AND
         (p1_healing_date IS NULL OR met.date.EpochMillis < p1_healing_date)
-RETURN  met.device, count(DISTINCT met) AS infected_contacts
+RETURN  met.device, count(DISTINCT met) AS infected_contacts;
     \end{verbatim}
 \end{tcolorbox}
 
@@ -305,7 +305,7 @@ CALL {
                 (go1.date.EpochMillis < healing_date OR healing_date IS NULL)
         RETURN  pl AS contact, loc.name AS tracing, go1.date AS time
 }
-RETURN DISTINCT contact, collect({tracing:tracing, time:time}) AS info
+RETURN DISTINCT contact, collect({tracing:tracing, time:time}) AS info;
     \end{verbatim}
 \end{tcolorbox}
 
@@ -335,9 +335,9 @@ Only the most significative commands are shown in this document.
 
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
-MATCH   (a:Person {name:$name1}), (b:Person {name:$name2})
-CREATE  (a)-[r:HAS_MET {date:$date}, {device:$device}]->(b), 
-        (b)-[r:HAS_MET {date:$date}, {device:$device}]->(a);
+MATCH   (a:Person {ssn:$ssn1}), (b:Person {ssn1:$ssn2})
+CREATE  (a)-[r:HAS_MET {date:$date, device:$device}]->(b), 
+        (b)-[r:HAS_MET {date:$date, device:$device}]->(a);
     \end{verbatim}
 \end{tcolorbox}
 
