@@ -1,10 +1,8 @@
 // People that have been in contact with an infected "p"
-// TODO: check dates
-// TODO: check times
 
-// :param name => "p";
+// :param ssn => "x";
 
-MATCH   (p:Person {name:$name})
+MATCH   (p:Person {ssn:$ssn})
 WHERE   p.contagion_date IS NOT NULL
 CALL {
         WITH    p

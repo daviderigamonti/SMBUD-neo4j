@@ -8,6 +8,7 @@
 \usepackage{graphicx} % 'graphics' package interface
 \usepackage{geometry} % Edit document margins
 \usepackage{hyperref} % Table of contents hyperlinks
+\usepackage{tcolorbox} % Colored boxes for code
 
 % HELPER PACKAGES (REMOVE IN FINAL) %
 \usepackage{blindtext} % Lorem Ipsum
@@ -165,11 +166,201 @@ Possible relationships are:
 
 \subsection{Queries}
 
-\blindtext
+Only the most significative queries are shown in this document.
+
+\subsubsection{Average age}
+
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+WITH    apoc.date.convert(timestamp(), "ms", "d") AS now
+MATCH   (pc:Person)
+WHERE   pc.contagion_date IS NOT NULL AND
+        NOT EXISTS((pc)-[:IS_HOSPITALIZED_IN]->(:Location {type:"Hospital"}))
+WITH    apoc.date.parse(toString(pc.birthdate), "d", "yyyy-MM-dd") AS pc_birth,
+        now
+MATCH   (ph:Person)
+WHERE   EXISTS((ph)-[:IS_HOSPITALIZED_IN]->(:Location {type:"Hospital"}))
+WITH    apoc.date.parse(toString(ph.birthdate), "d", "yyyy-MM-dd") AS ph_birth,
+        now, pc_birth
+
+RETURN  avg((now-pc_birth)/365) AS avg_age_nothospitalized, 
+        avg((now-ph_birth)/365) AS avg_age_hospitalized;
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Returns the average age for infected (but not hospitalized) and for infected 
+and hospitalized people inside the database.
+
+\subsubsection{Cities}
+
+\todo{cities query}
+
+\subsubsection{Devices}
+
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH   (p1:Person)-[met:HAS_MET]->(p2:Person)
+WITH    apoc.date.parse(toString(p1.contagion_date), "ms", "yyyy-MM-dd") 
+            AS p1_contagion_date,
+        apoc.date.parse(toString(p1.healing_date), "ms", "yyyy-MM-dd") 
+            AS p1_healing_date,
+        apoc.date.parse(toString(p2.contagion_date), "ms", "yyyy-MM-dd") 
+            AS p2_contagion_date,
+        met
+WHERE   p1_contagion_date IS NOT NULL AND
+        (p2_contagion_date IS NULL OR p2_contagion_date > p1_contagion_date)
+WITH    apoc.date.add(p1_contagion_date, "ms", -14, "d") AS contagion_l,
+        met, p1_healing_date
+WHERE   met.date.EpochMillis >= contagion_l AND
+        (p1_healing_date IS NULL OR met.date.EpochMillis < p1_healing_date)
+RETURN  met.device, count(DISTINCT met) AS infected_contacts
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Returns the number of contacts registered for each type of device.
+
+% \subsubsection{Healed}
+
+% \begin{tcolorbox}[fontupper=\scriptsize]
+%     \begin{verbatim}
+% MATCH   (p:Person)
+% WHERE   p.contagion_date IS NOT NULL AND p.healing_date IS NOT NULL AND
+%         p.healing_date >= $date1 AND p.healing_date <= $date2
+% RETURN  count(p);
+%     \end{verbatim}
+% \end{tcolorbox}
+
+% \noindent % Removes indentation after box
+% Returns the number of healed people over a given span of time. \\
+% Takes the following parameters: 
+% \begin{itemize}
+%     \item \texttt{\$date1} \emph{(date)}: starting date;
+% 	\item \texttt{\$date2} \emph{(date)}: ending date.
+% \end{itemize}
+
+
+% \subsubsection{Hospitalized}
+
+\subsubsection{Infected}
+
+\todo{infected query}
+
+\subsubsection{Locations}
+
+\todo{locations query}
+
+\subsubsection{Notifications}
+
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH   (p:Person {ssn:$ssn})
+WHERE   p.contagion_date IS NOT NULL
+CALL {
+        WITH    p
+        CALL    apoc.path.expandConfig(p, {
+                        relationshipFilter: "FAMILY>",
+                        minLevel: 1,
+                        maxLevel: -1,
+                        labelFilter: "+Person",
+                        uniqueness:"NODE_GLOBAL",
+                        bfs:true
+        }) YIELD path AS path
+        UNWIND tail(nodes(path)) AS x
+        WITH DISTINCT x AS contact
+        RETURN  contact, "family" AS tracing, null AS time
+
+        UNION
+
+        WITH    p
+        MATCH   (p)-[met:HAS_MET]->(pc:Person)
+        WITH    apoc.date.parse(toString(p.contagion_date), "ms", "yyyy-MM-dd") 
+                    AS contagion_date,
+                apoc.date.parse(toString(p.healing_date), "ms", "yyyy-MM-dd") 
+                    AS healing_date,
+                pc, met
+        WITH    apoc.date.add(contagion_date, "ms", -14, "d") AS contagion_l,
+                pc, met, healing_date
+        WHERE   (met.date.EpochMillis >= contagion_l) AND 
+                (met.date.EpochMillis < healing_date OR healing_date IS NULL)
+        RETURN  pc AS contact, met.device AS tracing, met.date AS time
+
+        UNION
+
+        WITH    p
+        MATCH   (p)-[go1:WENT_TO]->(loc:Location)<-[go2:WENT_TO]-(pl:Person)
+        WITH    apoc.date.parse(toString(p.contagion_date), "ms", "yyyy-MM-dd") 
+                    AS contagion_date,
+                apoc.date.parse(toString(p.healing_date), "ms", "yyyy-MM-dd") 
+                    AS healing_date,
+                pl, go1, go2, loc
+        WITH    apoc.date.add(contagion_date, "ms", -14, "d") AS contagion_l,
+                apoc.date.add(go1.date.EpochMillis, "ms", -2, "h") AS go1_l,
+                apoc.date.add(go1.date.EpochMillis, "ms", 2, "h") AS go1_u,
+                pl, go1, go2, loc, healing_date
+        WHERE   go2.date.EpochMillis >= go1_l AND 
+                go2.date.EpochMillis <= go1_u AND
+                go1.date.EpochMillis >= contagion_l AND 
+                (go1.date.EpochMillis < healing_date OR healing_date IS NULL)
+        RETURN  pl AS contact, loc.name AS tracing, go1.date AS time
+}
+RETURN DISTINCT contact, collect({tracing:tracing, time:time}) AS info
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Returns a list of people that a specific infected person (given their 
+\emph{social security number}) may have been in contact with; considering 
+family relationships, contacts from device tracking and inferred contacts from
+explicit data collection in specific locations. \\
+For each contact we offer complete information on the person that came in 
+contact with the infected and, when possible, place/device information and 
+time of the contact. \\
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$ssn} \emph{(string)}: social security number of the 
+        infected person.
+\end{itemize}
+
+\subsubsection{Vaccinated}
+
+\todo{vaccinated query (one of the two)}
 
 \subsection{Commands}
 
-\blindtext
+Only the most significative commands are shown in this document.
+
+\subsubsection{Contact}
+
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH   (a:Person {name:$name1}), (b:Person {name:$name2})
+CREATE  (a)-[r:HAS_MET {date:$date}, {device:$device}]->(b), 
+        (b)-[r:HAS_MET {date:$date}, {device:$device}]->(a);
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Registration of a contact via device.
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$ssn1} \emph{(string)}: social security number of the 
+        first person;
+    \item \texttt{\$ssn2} \emph{(string)}: social security number of the
+        second person;
+    \item \texttt{\$date} \emph{(datetime)}: date and time of the contact;
+    \item \texttt{\$device} \emph{(string)}: type of device that detected a 
+        contact.
+\end{itemize}
+
+\subsubsection{Negative test}
+
+\todo{negative test command}
+
+\subsubsection{Positive test}
+
+\todo{positive test command}
 
 \clearpage
 

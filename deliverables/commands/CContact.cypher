@@ -1,13 +1,11 @@
 // Registration of a contact via contact application
-// TODO: check dates
-// TODO: check times
-// TODO: HAS_MET device
 
-// :param name1 => "p1";
-// :param name2 => "p2";
+// :param ssn1 => "s1";
+// :param ssn2 => "s2";
 // :param date => datetime("d");
+// :param device => "d";
 
-MATCH   (a:Person {name:$name1}), (b:Person {name:$name2})
-CREATE  (a)-[r:HAS_MET {date:$date}]->(b), 
-        (b)-[r:HAS_MET {date:$date}]->(a);
+MATCH   (a:Person {ssn:$ssn1}), (b:Person {ssn1:$ssn2})
+CREATE  (a)-[r:HAS_MET {date:$date}, {device:$device}]->(b), 
+        (b)-[r:HAS_MET {date:$date}, {device:$device}]->(a);
         
