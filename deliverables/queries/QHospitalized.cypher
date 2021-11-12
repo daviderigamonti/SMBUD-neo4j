@@ -1,7 +1,8 @@
-// Find the the number of hospitalized patiens during a given time
+// Find the the number of hospitalized patients during a given time
 
-// :param date => date("x");
+// :param date1 => date("x");
+// :param date2 => date("y");
 
 MATCH (p:Person)-[r:IS_HOSPITALIZED_IN]->(h:Location)
-WHERE $date >= r.date AND $date <= p.healing_date
+WHERE r.date >= $date1 and r.date <= $date2
 RETURN count(*);
