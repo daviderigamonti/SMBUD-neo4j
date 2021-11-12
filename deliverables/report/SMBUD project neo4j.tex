@@ -100,7 +100,7 @@ Moreover, some places like restaurants, theaters and hospitals, explicitly
 collect date and name of visiting people. \\
 The idea is to use the system so that, if a person gets flagged as 
 \emph{infected}, we can understand who are all the people who had a contact 
-with them and, in the meantime, build useful analytics with the gathered 
+with him/her and, in the meantime, build useful analytics with the gathered 
 information. \\
 Contacts can be of 3 different types: 
 \begin{itemize}
@@ -136,6 +136,8 @@ Contacts can be of 3 different types:
             together, relatives who see each other very often or roommates. 
             Obviously, all members of a family live in the same city and are 
             considered "always in contact".
+	\item[] For simplicity, contacts coming from tracking applications
+	 go from 28/10/2021 to 10/11/2021.
         \item[] The tracking relationships assume that different devices can 
             only see each other if they are of the same \emph{device type}.
         \item[] We assume that the tracking devices only function outside 
@@ -143,7 +145,7 @@ Contacts can be of 3 different types:
             (unless they meet outside) and contacts between people inside the
             same location at the same time won't be tracked.
         \item[] For tracking purposes, a person is considered \emph{infected}
-            up to 14 days prior the positive test. 
+            up to 14 days prior the positive test. \todo{in che senso?}
     \end{itemize}
 
     \item DB population
@@ -199,12 +201,12 @@ such elements should be present in the database is provided:
         In the implementation, the various specializations of the 
         \emph{Location} "relation" were merged into the parent with the help
         of an attribute named \texttt{type}.
-    \item \texttt{Hospital}: it is a specialization of the location entity. 
+    \item \texttt{Hospital}: it is a specialization of the entity location. 
         Given the current emergency, hospitals can offer hospitalization rooms 
         for patients with \emph{COVID-19} but can also be visited like other 
         locations. 
-    \item \texttt{Restaurant}: it is a specialization of the location entity. 
-    \item \texttt{Theater}: it is a specialization of the location entity.  
+    \item \texttt{Restaurant}: it is a specialization of the entity location. 
+    \item \texttt{Theater}: it is a specialization of the entity location.  
 \end{itemize}
 
 \subsection{Dataset description}
@@ -224,9 +226,9 @@ Possible relationships are:
         certain time;
 	\item \texttt{FAMILY} for family relationships;
 	\item \texttt{IS\char`_IN} between locations and cities;
-	\item \texttt{LIVES\char`_IN} to link people to the city they live in;
+	\item \texttt{LIVES\char`_IN} to link people to the city where they live in;
     \item \texttt{HAS\char`_MET} to indicate contacts between people using 
-        tracing app or devices;
+        tracking app or devices;
     \item \texttt{IS\char`_HOSPITALIZED\char`_IN} to indicate people who 
         are/were hospitalized for covid reasons.
 \end{itemize}
@@ -280,8 +282,8 @@ RETURN cities.name, infected
 Return cities and the number of infected people in a given span of time. Results are sorted by the number of infected people. 
 Takes the following parameters: 
 \begin{itemize}
-    \item \texttt{\$date1} \emph{(datetime)}: starting date;
-    \item \texttt{\$date2} \emph{(datetime)}: ending date.
+    \item \texttt{\$date1} \emph{(date)}: starting date;
+    \item \texttt{\$date2} \emph{(date)}: ending date.
 \end{itemize}
 
 \subsubsection{Devices}
@@ -307,7 +309,7 @@ RETURN  met.device, count(DISTINCT met) AS infected_contacts;
 \end{tcolorbox}
 
 \noindent % Removes indentation after box
-Returns the number of contacts registered for each type of device.
+Returns the number of contacts registered for each type of device. \todo{aggiungere spiegazione del where}
 
 \subsubsection{Infected}
 \begin{tcolorbox}[fontupper=\scriptsize]
@@ -411,6 +413,7 @@ explicit data collection in specific locations. \\
 For each contact we offer complete information on the person that came in 
 contact with the infected and, when possible, place/device information and 
 time of the contact. \\
+\todo{aggiungere: nelle location guardiamo da 2 h prima a 2 h dopo e che consideriamo tutta la famiglia}
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number of the 
