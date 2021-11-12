@@ -322,6 +322,45 @@ RETURN  device, infected_contacts;
 Returns the number of infected contacts registered for each type of device, 
 results are sorted by the number of infected contacts. 
 
+\subsubsection{Healed}
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH   (p:Person)
+WHERE   p.contagion_date IS NOT NULL AND p.healing_date IS NOT NULL AND
+        p.healing_date >= $date1 AND p.healing_date <= $date2
+RETURN  count(p);
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Returns the number of healed people over a given span of time. \\
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$date1} \emph{(date)}: starting date;
+    \item \texttt{\$date2} \emph{(date)}: ending date.
+\end{itemize}
+
+\subsubsection{Hospitalized}
+
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH (p:Person)-[r:IS_HOSPITALIZED_IN]->(h:Location)
+WITH collect(p) as patients, h, r
+WHERE r.date >= $date1 and r.date <= $date2
+RETURN h.name, count(patients)
+ORDER BY count(patients) DESC;
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Returns the number of patients hospitalized for covid reasons in each hospital in a given period of time.
+Results are ordered by number of patients.
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$date1} \emph{(date)}: starting date;
+    \item \texttt{\$date2} \emph{(date)}: ending date.
+\end{itemize}
+
 \subsubsection{Infected}
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
@@ -344,20 +383,26 @@ Takes the following parameters:
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
 MATCH (places:Location)<-[r:WENT_TO]-(person:Person)
-WHERE $date1 <= r.date AND r.date <= $date2
+WHERE datetime($date1) <= r.date AND r.date <= datetime($date2) 
+AND person.contagion_date is not null
+AND person.contagion_date >= date($date1) and person.contagion_date <= date($date2)
 WITH places, count(*) AS infected
 ORDER BY infected DESC
-RETURN places.name, infected
+RETURN places.name, infected;
     \end{verbatim}
 \end{tcolorbox}
 \noindent % Removes indentation after box
+<<<<<<< HEAD
 Returns locations and the corresponding number of people who went there and 
 possibly got infected in a certain span of time, results are sorted according 
 to the number of visits. \\
+=======
+Returns locations and the corresponding number of people who went there in a certain period and got infected. Results are sorted according to the number of infections. \\
+>>>>>>> 9ca74142c2fa5a88df15404f0cc1b7f32b21ab97
 Takes the following parameters: 
 \begin{itemize}
-    \item \texttt{\$date1} \emph{(datetime)}: starting date;
-    \item \texttt{\$date2} \emph{(datetime)}: ending date.
+    \item \texttt{\$date1} \emph{(string)}: starting date;
+    \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
 
 \subsubsection{Notifications}
@@ -456,6 +501,25 @@ number of infected (considering also the non-vaccinated).
 
 Only the most significative commands are shown in this document. \\
 All the implemented commands will be provided alongside this document.
+
+\subsubsection{Access}
+
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH   (a:Person {ssn:$ssn}),
+        (b:Location {name:$location})
+CREATE  (a)-[r:WENT_TO {date:$date}]->(b);  
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Explicit registration of a visit to a location.
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$ssn} \emph{(string)}: social security number of the person;
+    \item \texttt{\$date} \emph{(datetime)}: date and time of the visit;
+    \item \texttt{\$location} \emph{(string)}: name of the location.
+\end{itemize}
 
 \subsubsection{Contact}
 
