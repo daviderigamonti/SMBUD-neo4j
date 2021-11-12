@@ -484,6 +484,25 @@ number of infected (considering also the non-vaccinated).
 Only the most significative commands are shown in this document. \\
 All the implemented commands will be provided alongside this document.
 
+\subsubsection{Access}
+
+\begin{tcolorbox}[fontupper=\scriptsize]
+    \begin{verbatim}
+MATCH   (a:Person {ssn:$ssn}),
+        (b:Location {name:$location})
+CREATE  (a)-[r:WENT_TO {date:$date}]->(b);  
+    \end{verbatim}
+\end{tcolorbox}
+
+\noindent % Removes indentation after box
+Explicit registration of a visit to a location.
+Takes the following parameters: 
+\begin{itemize}
+    \item \texttt{\$ssn} \emph{(string)}: social security number of the person;
+    \item \texttt{\$date} \emph{(datetime)}: date and time of the visit;
+    \item \texttt{\$location} \emph{(string)}: name of the location.
+\end{itemize}
+
 \subsubsection{Contact}
 
 \begin{tcolorbox}[fontupper=\scriptsize]
