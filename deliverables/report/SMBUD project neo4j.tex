@@ -111,6 +111,7 @@ Contacts can be of 3 different types:
 \end{itemize}
 
 \subsection{Hypoteses}
+\label{sec:Hypoteses} % Label for hyperlinks
 
 \begin{itemize}
 
@@ -135,17 +136,22 @@ Contacts can be of 3 different types:
         \item[] Members of a family are assumed to be all the people who live 
             together, relatives who see each other very often or roommates. 
             Obviously, all members of a family live in the same city and are 
-            considered "always in contact".
-	\item[] For simplicity, contacts coming from tracking applications
-	 go from 28/10/2021 to 10/11/2021.
+            considered "always in contact" and families do not change over time.
+        \item[] For simplicity, contacts coming from tracking applications go 
+            from \\ 28/10/2021 to 10/11/2021.
         \item[] The tracking relationships assume that different devices can 
             only see each other if they are of the same \emph{device type}.
         \item[] We assume that the tracking devices only function outside 
             houses, therefore contacts between members of the same family 
             (unless they meet outside) and contacts between people inside the
             same location at the same time won't be tracked.
-        \item[] For tracking purposes, a person is considered \emph{infected}
-            up to 14 days prior the positive test. \todo{in che senso?}
+        \item[] When tracing back contacts from an \emph{infected} person, only
+            the ones that happened up to 14 days prior the positive test are 
+            taken into consideration, eventual contacts after the positive 
+            test up to the healing date are also considered.
+        \item[] When two people go to the same location, it's considered a
+            valid contact only if the two accesses happen between 2 hours from
+            one to the other.
     \end{itemize}
 
     \item DB population
@@ -177,7 +183,7 @@ Contacts can be of 3 different types:
 
 \subsection{ER Diagram}
 
-\todo{English writing of theater in ER diagram}
+\todo{theater lowercase in ER diagram}
 \begin{figure}[h]
     \makebox[\textwidth][c]{ % Box to properly center the image
         \includegraphics[scale=0.6]{er_diagram.png} % ER diagram
@@ -279,7 +285,8 @@ RETURN cities.name, infected
 \end{tcolorbox}
 
 \noindent % Removes indentation after box
-Return cities and the number of infected people in a given span of time. Results are sorted by the number of infected people. 
+Returns cities and number of infected people per city in a given span of time, 
+results are sorted by the number of infected people. 
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$date1} \emph{(date)}: starting date;
@@ -304,12 +311,16 @@ WITH    apoc.date.add(p1_contagion_date, "ms", -14, "d") AS contagion_l,
         met, p1_healing_date
 WHERE   met.date.EpochMillis >= contagion_l AND
         (p1_healing_date IS NULL OR met.date.EpochMillis < p1_healing_date)
-RETURN  met.device, count(DISTINCT met) AS infected_contacts;
+WITH    count(DISTINCT met) AS infected_contacts, 
+        met.device AS device
+ORDER BY infected_contacts DESC
+RETURN  device, infected_contacts;
     \end{verbatim}
 \end{tcolorbox}
 
 \noindent % Removes indentation after box
-Returns the number of contacts registered for each type of device. \todo{aggiungere spiegazione del where}
+Returns the number of infected contacts registered for each type of device, 
+results are sorted by the number of infected contacts. 
 
 \subsubsection{Infected}
 \begin{tcolorbox}[fontupper=\scriptsize]
@@ -340,7 +351,9 @@ RETURN places.name, infected
     \end{verbatim}
 \end{tcolorbox}
 \noindent % Removes indentation after box
-Returns locations and the corresponding number of people who went there and possibly got infected in a certain span of time. Results are sorted according to the number of visits. \\
+Returns locations and the corresponding number of people who went there and 
+possibly got infected in a certain span of time, results are sorted according 
+to the number of visits. \\
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$date1} \emph{(datetime)}: starting date;
@@ -410,10 +423,11 @@ Returns a list of people that a specific infected person (given their
 \emph{social security number}) may has been in contact with, considering 
 family relationships, contacts from device tracking and inferred contacts from
 explicit data collection in specific locations. \\
+All the various contraints and assumptions are mentioned in the 
+\hyperref[sec:Hypoteses]{\bf hypoteses section}. \\
 For each contact we offer complete information on the person that came in 
 contact with the infected and, when possible, place/device information and 
 time of the contact. \\
-\todo{aggiungere: nelle location guardiamo da 2 h prima a 2 h dopo e che consideriamo tutta la famiglia}
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number of the 
@@ -483,7 +497,9 @@ SET p.negative_test_date = $test_date, p.healing_date = healing
 \end{tcolorbox}
 
 \noindent % Removes indentation after box
-Registration of a negative COVID test. It updates the date of the last negative test of the person with the given SSN; if the person was infected, the healing date is updated with the date of the test, otherwise it is not changed.
+Registration of a negative COVID test. It updates the date of the last negative
+test of the person with the given SSN; if the person was infected, the healing 
+date is updated with the date of the test, otherwise it is not changed.
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number;
@@ -506,7 +522,9 @@ SET p.contagion_date = infection
 \end{tcolorbox}
 
 \noindent % Removes indentation after box
-Registration of a positive COVID test. The contagion date is set equal to the test date, considering that if a person got covid, he/she cannot get it again (in this case the contagion date is not updated).
+Registration of a positive COVID test. The contagion date is set equal to the 
+test date, considering that if a person got covid, they cannot get it again 
+(in this case the contagion date is not updated).
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number;
