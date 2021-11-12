@@ -385,20 +385,17 @@ Takes the following parameters:
 MATCH (places:Location)<-[r:WENT_TO]-(person:Person)
 WHERE datetime($date1) <= r.date AND r.date <= datetime($date2) 
 AND person.contagion_date is not null
-AND person.contagion_date >= date($date1) and person.contagion_date <= date($date2)
+AND person.contagion_date >= date($date1) 
+AND person.contagion_date <= date($date2)
 WITH places, count(*) AS infected
 ORDER BY infected DESC
 RETURN places.name, infected;
     \end{verbatim}
 \end{tcolorbox}
 \noindent % Removes indentation after box
-<<<<<<< HEAD
 Returns locations and the corresponding number of people who went there and 
-possibly got infected in a certain span of time, results are sorted according 
-to the number of visits. \\
-=======
-Returns locations and the corresponding number of people who went there in a certain period and got infected. Results are sorted according to the number of infections. \\
->>>>>>> 9ca74142c2fa5a88df15404f0cc1b7f32b21ab97
+possibly got infected during a certain span of time, results are sorted 
+according to the number of visits. \\
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$date1} \emph{(string)}: starting date;
