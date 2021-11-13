@@ -245,7 +245,8 @@ database dump will be provided alongside this document.
 \subsection{Queries}
 
 Only the most significative queries are shown in this document. \\
-All the implemented queries will be provided alongside this document.
+All the implemented queries will be provided alongside this document. \\
+\textbf{N.B.} All the dates in input should be strings formated as: 'YYYY-MM-DD'.
 
 \subsubsection{Average age}
 
@@ -275,11 +276,12 @@ and hospitalized people inside the database.
 
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
-MATCH (cities:City)<-[LIVES_IN]-(person:Person) 
-WHERE person.contagion_date >= $date1 AND person.contagion_date <= $date2
+MATCH (cities:City)<-[:LIVES_IN]-(person:Person) 
+WHERE person.contagion_date >= date($date1) AND 
+person.contagion_date <= date($date2)
 WITH cities, count(*) AS infected
 ORDER BY infected DESC
-RETURN cities.name, infected
+RETURN cities.name, infected;
     \end{verbatim}
 \end{tcolorbox}
 
@@ -288,8 +290,8 @@ Returns cities and number of infected people per city in a given span of time,
 results are sorted by the number of infected people. 
 Takes the following parameters: 
 \begin{itemize}
-    \item \texttt{\$date1} \emph{(date)}: starting date;
-    \item \texttt{\$date2} \emph{(date)}: ending date.
+    \item \texttt{\$date1} \emph{(string)}: starting date;
+    \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
 
 \subsubsection{Devices}
@@ -326,7 +328,7 @@ results are sorted by the number of infected contacts.
     \begin{verbatim}
 MATCH   (p:Person)
 WHERE   p.contagion_date IS NOT NULL AND p.healing_date IS NOT NULL AND
-        p.healing_date >= $date1 AND p.healing_date <= $date2
+        p.healing_date >= date($date1) AND p.healing_date <= date($date2)
 RETURN  count(p);
     \end{verbatim}
 \end{tcolorbox}
@@ -335,8 +337,8 @@ RETURN  count(p);
 Returns the number of healed people over a given span of time. \\
 Takes the following parameters: 
 \begin{itemize}
-    \item \texttt{\$date1} \emph{(date)}: starting date;
-    \item \texttt{\$date2} \emph{(date)}: ending date.
+    \item \texttt{\$date1} \emph{(string)}: starting date;
+    \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
 
 \subsubsection{Hospitalized}
@@ -345,7 +347,7 @@ Takes the following parameters:
     \begin{verbatim}
 MATCH (p:Person)-[r:IS_HOSPITALIZED_IN]->(h:Location)
 WITH collect(p) as patients, h, r
-WHERE r.date >= $date1 and r.date <= $date2
+WHERE r.date >= date($date1) and r.date <= date($date2)
 RETURN h.name, count(patients)
 ORDER BY count(patients) DESC;
     \end{verbatim}
@@ -356,8 +358,8 @@ Returns the number of patients hospitalized for covid reasons in each hospital i
 Results are ordered by number of patients.
 Takes the following parameters: 
 \begin{itemize}
-    \item \texttt{\$date1} \emph{(date)}: starting date;
-    \item \texttt{\$date2} \emph{(date)}: ending date.
+    \item \texttt{\$date1} \emph{(string)}: starting date;
+    \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
 
 \subsubsection{Infected}
@@ -365,7 +367,7 @@ Takes the following parameters:
     \begin{verbatim}
 MATCH   (p:Person)
 WHERE   p.contagion_date IS NOT NULL AND
-        p.contagion_date >= $date1 AND p.contagion_date <= $date2
+        p.contagion_date >= date($date1) AND p.contagion_date <= date($date2)
 RETURN  count(p);
     \end{verbatim}
 \end{tcolorbox}
@@ -374,8 +376,8 @@ RETURN  count(p);
 Returns the number of infected people over a given span of time. \\
 Takes the following parameters: 
 \begin{itemize}
-    \item \texttt{\$date1} \emph{(date)}: starting date;
-    \item \texttt{\$date2} \emph{(date)}: ending date.
+    \item \texttt{\$date1} \emph{(string)}: starting date;
+    \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
 
 \subsubsection{Locations}
@@ -504,7 +506,7 @@ All the implemented commands will be provided alongside this document.
     \begin{verbatim}
 MATCH   (a:Person {ssn:$ssn}),
         (b:Location {name:$location})
-CREATE  (a)-[r:WENT_TO {date:$date}]->(b);  
+CREATE  (a)-[r:WENT_TO {date:datetime($date)}]->(b);  
     \end{verbatim}
 \end{tcolorbox}
 
@@ -513,7 +515,8 @@ Explicit registration of a visit to a location.
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number of the person;
-    \item \texttt{\$date} \emph{(datetime)}: date and time of the visit;
+    \item \texttt{\$date} \emph{(string)}: date and time of the visit;
+\todo{in che formato va scritta visto che è datetime???}
     \item \texttt{\$location} \emph{(string)}: name of the location.
 \end{itemize}
 
@@ -522,8 +525,8 @@ Takes the following parameters:
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
 MATCH   (a:Person {ssn:$ssn1}), (b:Person {ssn1:$ssn2})
-CREATE  (a)-[r:HAS_MET {date:$date, device:$device}]->(b), 
-        (b)-[r:HAS_MET {date:$date, device:$device}]->(a);
+CREATE  (a)-[r:HAS_MET {date:datetime($date), device:$device}]->(b), 
+        (b)-[r:HAS_MET {date:datetime($date), device:$device}]->(a);
     \end{verbatim}
 \end{tcolorbox}
 
@@ -535,7 +538,7 @@ Takes the following parameters:
         first person;
     \item \texttt{\$ssn2} \emph{(string)}: social security number of the
         second person;
-    \item \texttt{\$date} \emph{(datetime)}: date and time of the contact;
+    \item \texttt{\$date} \emph{(string)}: date and time of the contact;
     \item \texttt{\$device} \emph{(string)}: type of device that detected a 
         contact.
 \end{itemize}
@@ -548,11 +551,12 @@ MATCH (p {ssn: $ssn})
 WITH p,
     CASE 
         WHEN p.healing_date IS NULL AND p.contagion_date IS NOT NULL 
-        THEN $test_date
+                THEN date($test_date)
         ELSE p.healing_date
     END 
     AS healing
-SET p.negative_test_date = $test_date, p.healing_date = healing
+SET p.negative_test_date = date($test_date), p.healing_date = healing;
+
     \end{verbatim}
 \end{tcolorbox}
 
@@ -563,7 +567,7 @@ date is updated with the date of the test, otherwise it is not changed.
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number;
-    \item \texttt{\$test\_date} \emph{(date)}: date of the negative test.
+    \item \texttt{\$test\_date} \emph{(string)}: date of the negative test.
 
 \end{itemize}
 
@@ -574,10 +578,11 @@ MATCH (p {ssn: $ssn})
 WITH p,
     CASE 
         WHEN p.contagion_date IS NOT NULL THEN p.contagion_date
-        ELSE $test_date
+        ELSE date($test_date)
     END 
     AS infection
-SET p.contagion_date = infection
+SET p.contagion_date = infection;
+
     \end{verbatim}
 \end{tcolorbox}
 
@@ -588,7 +593,7 @@ test date, considering that if a person got covid, they cannot get it again
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number;
-    \item \texttt{\$test\_date} \emph{(date)}: date of the positive test.
+    \item \texttt{\$test\_date} \emph{(string)}: date of the positive test.
 \end{itemize}
 
 \clearpage
