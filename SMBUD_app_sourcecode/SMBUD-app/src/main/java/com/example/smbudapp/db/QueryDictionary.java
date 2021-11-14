@@ -38,11 +38,11 @@ public class QueryDictionary {
 			"RETURN  count(p);";
 	private static String queryHospitalized = "MATCH (p:Person)-[r:IS_HOSPITALIZED_IN]->(h:Location)\r\n" + 
 			"WITH collect(p) as patients, h, r\r\n" + 
-			"WHERE r.recovery_date >= date($date1) and r.recovery_date <= date($date2)\r\n" +
+			"WHERE r.date >= date($date1) and r.date <= date($date2)\r\n" +
 			"RETURN h.name, count(patients)\r\n" + 
 			"ORDER BY count(patients) DESC;";
 	private static String queryHospitalizedV2 = "MATCH (p:Person)-[r:IS_HOSPITALIZED_IN]->(h:Location)\r\n" +
-			"WHERE r.recovery_date >= date($date1) and r.recovery_date <= date($date2)\r\n" +
+			"WHERE r.date >= date($date1) and r.date <= date($date2)\r\n" +
 			"RETURN count(*);";
 	private static String queryNumInfected = "MATCH   (p:Person)\r\n" + 
 			"WHERE   p.contagion_date IS NOT NULL AND\r\n" + 
