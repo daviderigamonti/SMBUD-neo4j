@@ -22,10 +22,10 @@
 \graphicspath{ {./res/} } % Path to graphics
 \hypersetup{    % ToC Hyperlink setup
     colorlinks,
-    citecolor=black,
-    filecolor=black,
-    linkcolor=black,
-    urlcolor=black
+    citecolor=blue,
+    filecolor=blue,
+    linkcolor=blue,
+    urlcolor=blue
 }
 
 %----------------------------------------------------------------------------------------
@@ -76,7 +76,10 @@
 \clearpage
 
 % INDEX
-\tableofcontents
+{
+    \hypersetup{hidelinks}
+    \tableofcontents
+}
 
 % LIST OF TODOs (REMOVE IN FINAL)
 \listoftodos
@@ -936,7 +939,7 @@ should be "immuni". \\
 The plugin APOC must be installed since most of the queries use its 
 functionalities.
 
-\clearpage
+\clearpage % Here otherwise the screenshots go in strange places
 
 \subsection{Screenshots}
 
@@ -964,7 +967,7 @@ functionalities.
 
 \setlength\abovecaptionskip{0cm} % Reset caption length
 
-\clearpage % Here otherwise the screenshots go in strange places
+\clearpage 
 
 % REFERENCES AND SOURCES
 \section{References and sources}
@@ -977,7 +980,15 @@ In order to develop these project, the following tools were used:
     \item \LaTeX~to write the report;
     \item Github as a versioning and collaboration mean;
     \item Java, JavaFX, Scene builder and the Bolt Protocol to build 
-        the application.
+        the application;
+    \item \url{https://www.Mockaroo.com} 
+        to generate realistic data for people;
+    \item \href{https://github.com/DataScienceSpecialization/courses/blob/master/03_GettingData/03_02_summarizingData/data/restaurants.csv}{link}
+        to the resource used for the restaurant population;
+    \item \href{https://corgis-edu.github.io/corgis/csv/hospitals/}{link}
+        to the resource used for the hospital population;
+    \item \href{https://github.com/planekid/moviepass/blob/master/theaters.csv}{link}
+        to the resource used for the theater population.
 \end{itemize}
 
 \clearpage
