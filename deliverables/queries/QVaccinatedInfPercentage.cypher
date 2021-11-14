@@ -5,4 +5,4 @@ WHERE p.contagion_date >= p.vaccine_date
 WITH count(*) AS vaccinated
 MATCH (p1: Person)
 WHERE p1.contagion_date IS NOT NULL
-RETURN (toFloat(vaccinated)/count(*))*100;
+RETURN (toFloat(vaccinated)/count(*))*100 AS infected_vaccinated_percent;

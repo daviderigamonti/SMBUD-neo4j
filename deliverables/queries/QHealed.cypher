@@ -6,4 +6,4 @@
 MATCH   (p:Person)
 WHERE   p.contagion_date IS NOT NULL AND p.healing_date IS NOT NULL AND
         p.healing_date >= date($date1) AND p.healing_date <= date($date2)
-RETURN  count(p);
+RETURN  count(p) AS n_healed;

@@ -10,6 +10,7 @@
 \usepackage{hyperref} % Table of contents hyperlinks
 \usepackage{tcolorbox} % Colored boxes for code
 \usepackage[font=small, labelfont=bf]{caption} % Image caption font
+\usepackage{longtable} % Build long tables
 
 % HELPER PACKAGES (REMOVE IN FINAL) %
 \usepackage{blindtext} % Lorem Ipsum
@@ -245,8 +246,9 @@ database dump will be provided alongside this document.
 \subsection{Queries}
 
 Only the most significative queries are shown in this document. \\
-All the implemented queries will be provided alongside this document. \\
-\textbf{N.B.} Dates in input should be strings formated as 'YYYY-MM-DD', while datetimes as "YYYY-MM-DDThh:mm:ssZ".
+All the implemented queries will be provided alongside this document. \par
+\textbf{N.B.} Dates in input should be strings formated as 'YYYY-MM-DD', 
+while datetimes as "YYYY-MM-DDThh:mm:ssZ".
 
 \subsubsection{Average age}
 
@@ -272,14 +274,15 @@ RETURN  avg((now-pc_birth)/365) AS avg_age_nothospitalized,
 Returns the average age for infected (but not hospitalized) and for infected 
 and hospitalized people inside the database. \\
 An example of result is:
+
 \begin{center}
-\begin{tabular}{ |c|c| } 
- \hline
-avg\_age\_nothospitalized & avg\_age\_hospitalized \\
-\hline
-50.037848605577615 & 55.02631578947379 \\
- \hline
-\end{tabular}
+    \begin{tabular}{ |c|c| } 
+        \hline
+        avg\_age\_nothospitalized & avg\_age\_hospitalized \\
+        \hline
+        50.037848605577615 & 55.02631578947379 \\
+        \hline
+    \end{tabular}
 \end{center}
 
 \subsubsection{Cities}
@@ -291,7 +294,7 @@ WHERE person.contagion_date >= date($date1) AND
 person.contagion_date <= date($date2)
 WITH cities, count(*) AS infected
 ORDER BY infected DESC
-RETURN cities.name, infected;
+RETURN cities.name AS city_name, infected;
     \end{verbatim}
 \end{tcolorbox}
 
@@ -299,24 +302,28 @@ RETURN cities.name, infected;
 \noindent % Removes indentation after box
 Returns cities and number of infected people per city in a given span of time, 
 results are sorted by the number of infected people. 
-Takes the following parameters: 
+Takes the following parameters:
+
 \begin{itemize}
     \item \texttt{\$date1} \emph{(string)}: starting date;
     \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
-An example of result is: \\
+
+\noindent % Removes indentation after list
+An example of result is: 
 \begin{center}
-\begin{tabular}{ |c|c|c|} 
- \hline
-& cities.name & infected\\
-\hline
-1 & Honolulu & 8 \\
-2 & Concord & 8\\
-3 & Des Moines & 7\\
-4 & Little Rock & 6\\
- \hline
-\end{tabular}
+    \begin{tabular}{ |c|c|c|} 
+        \hline
+        & city\_name & infected\\
+        \hline
+        1 & Honolulu & 8 \\
+        2 & Concord & 8\\
+        3 & Des Moines & 7\\
+        4 & Little Rock & 6\\
+        \hline
+    \end{tabular}
 \end{center}
+
 \subsubsection{Devices}
 
 \begin{tcolorbox}[fontupper=\scriptsize]
@@ -345,28 +352,28 @@ RETURN  device, infected_contacts;
 \noindent % Removes indentation after box
 Returns the number of infected contacts registered for each type of device, 
 results are sorted by the number of infected contacts. 
-An example of result is: \\
-\begin{center}
-\begin{tabular}{ |c|c|} 
- \hline
-device & infected\_contacts\\
-\hline
-smartphone & 46 \\
-other & 42\\
-wearable & 23\\
- \hline
-\end{tabular}
-\end{center}
-\subsubsection{Devices}
+An example of result is: 
 
+\begin{center}
+    \begin{tabular}{ |c|c|} 
+        \hline
+        device & infected\_contacts\\
+        \hline
+        smartphone & 46 \\
+        other & 42\\
+        wearable & 23\\
+        \hline
+    \end{tabular}
+\end{center}
 
 \subsubsection{Healed}
+
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
 MATCH   (p:Person)
 WHERE   p.contagion_date IS NOT NULL AND p.healing_date IS NOT NULL AND
         p.healing_date >= date($date1) AND p.healing_date <= date($date2)
-RETURN  count(p);
+RETURN  count(p) AS n_healed;
     \end{verbatim}
 \end{tcolorbox}
 
@@ -377,6 +384,18 @@ Takes the following parameters:
     \item \texttt{\$date1} \emph{(string)}: starting date;
     \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
+
+\noindent % Removes indentation after list
+An example of result is:
+\begin{center}
+    \begin{tabular}{ |c| } 
+        \hline
+        n\_healed \\
+        \hline
+        15 \\
+        \hline
+    \end{tabular}
+\end{center}
 
 \subsubsection{Hospitalized}
 
@@ -391,25 +410,29 @@ ORDER BY count(patients) DESC;
 \end{tcolorbox}
 
 \noindent % Removes indentation after box
-Returns the number of patients hospitalized for covid reasons in each hospital in a given period of time.
-Results are ordered by number of patients.
+Returns the number of patients hospitalized for covid reasons in each 
+hospital in a given period of time, results are ordered by number of 
+patients. \\
 Takes the following parameters: 
+
 \begin{itemize}
     \item \texttt{\$date1} \emph{(string)}: starting date;
     \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
-An example of result is: \\
+
+\noindent % Removes indentation after list
+An example of result is: 
 \begin{center}
-\begin{tabular}{ |c|c|c|} 
- \hline
-& hospital & patients\\
-\hline
-1 & Blue Hill Memorial Hospital & 5 \\
-2 & Baylor Scott and White Texas Spine and Joint Hospital & 3\\
-3 & Stephens County Hospital & 3\\
-4 & Citizens Medical Center & 3\\
- \hline
-\end{tabular}
+    \begin{tabular}{ |c|c|c|} 
+        \hline 
+        & hospital & patients\\ 
+        \hline
+        1 & Blue Hill Memorial Hospital & 5 \\
+        2 & Baylor Scott and White Texas Spine and Joint Hospital & 3\\
+        3 & Stephens County Hospital & 3\\
+        4 & Citizens Medical Center & 3\\
+        \hline
+    \end{tabular}
 \end{center}
 
 \subsubsection{Infected}
@@ -418,19 +441,33 @@ An example of result is: \\
 MATCH   (p:Person)
 WHERE   p.contagion_date IS NOT NULL AND
         p.contagion_date >= date($date1) AND p.contagion_date <= date($date2)
-RETURN  count(p);
+RETURN  count(p) AS n_infected;
     \end{verbatim}
 \end{tcolorbox}
 
-\noindent % Removes indentation after box
+\noindent % Removes indentation after list
 Returns the number of infected people over a given span of time. \\
 Takes the following parameters: 
+
 \begin{itemize}
     \item \texttt{\$date1} \emph{(string)}: starting date;
     \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
 
+\noindent % Removes indentation after table
+An example of result is:
+\begin{center}
+    \begin{tabular}{ |c| } 
+        \hline
+        n\_infected \\
+        \hline
+        157 \\
+        \hline
+    \end{tabular}
+\end{center}
+
 \subsubsection{Locations}
+
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
 MATCH (places:Location)<-[r:WENT_TO]-(person:Person)
@@ -443,28 +480,33 @@ ORDER BY infected DESC
 RETURN places.name as location, places.type as type, infected;
     \end{verbatim}
 \end{tcolorbox}
+
 \noindent % Removes indentation after box
 Returns locations and the corresponding number of people who went there and 
 possibly got infected during a certain span of time, results are sorted 
 according to the number of visits. \\
 Takes the following parameters: 
+
 \begin{itemize}
     \item \texttt{\$date1} \emph{(string)}: starting date;
     \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
-An example of result is: \\
+
+\noindent % Removes indentation after list
+An example of result is: 
 \begin{center}
-\begin{tabular}{ |c|c|c|c|} 
- \hline
-& location & type & infected\\
-\hline
-1 & The China Doll & Restaurant & 7 \\
-2 & Cochran Memorial Hospital & Hospital & 6\\
-3 & Century 16 Aurora & Theater & 6\\
-4 & Carmike Patton Creek 15 + Imax & Theater & 6\\
- \hline
-\end{tabular}
+    \begin{tabular}{ |c|c|c|c|} 
+        \hline
+        & location & type & infected\\
+        \hline
+        1 & The China Doll & Restaurant & 7 \\
+        2 & Cochran Memorial Hospital & Hospital & 6\\
+        3 & Century 16 Aurora & Theater & 6\\
+        4 & Carmike Patton Creek 15 + Imax & Theater & 6\\
+        \hline
+    \end{tabular}
 \end{center}
+
 \subsubsection{Notifications}
 
 \begin{tcolorbox}[fontupper=\scriptsize]
@@ -534,11 +576,199 @@ For each contact we offer complete information on the person that came in
 contact with the infected and, when possible, place/device information and 
 time of the contact. \\
 Takes the following parameters: 
+
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number of the 
         infected person.
 \end{itemize}
-\todo{add example}
+
+\noindent % Removes indentation after list
+An example of result is: 
+
+\begin{scriptsize}
+    \begin{center}
+        \begin{longtable}{ |c|c|c| } 
+            \hline
+            \endfirsthead % Otherwise longtable gets angry
+            & contact & info \\
+            \hline
+            1 &
+            \begin{minipage}{7,2cm}
+                \begin{verbatim}
+
+
+{
+  "identity": 489,
+  "labels": [
+    "Person"
+  ],
+  "properties": {
+    "negative_test_date": "2020-08-17",
+    "birthdate": "1994-03-23",
+    "name": "Clare Pocock",
+    "contagion_date": "2020-02-21",
+    "vaccine_date": "2020-06-14",
+    "healing_date": "2020-03-02",
+    "email": "cpocock2o@blog.com",
+    "ssn": "379-46-5993"
+  }
+}
+                \end{verbatim}
+            \end{minipage}
+            & 
+            \begin{minipage}{5cm}
+                \begin{verbatim}
+[
+  {
+    "time": null,
+    "tracing": "family"
+  }
+] 
+                \end{verbatim}
+            \end{minipage} \\
+            \vdots & \vdots & \vdots \\
+            21 &
+            \begin{minipage}{7,2cm}
+                \begin{verbatim}
+
+
+{
+  "identity": 788,
+  "labels": [
+    "Person"
+  ],
+  "properties": {
+    "negative_test_date": "2020-09-10",
+    "birthdate": "1957-02-18",
+    "name": "Rockwell Forrestall",
+    "contagion_date": "2020-08-28",
+    "vaccine_date": "2021-09-18",
+    "healing_date": "2020-09-10",
+    "email": "rforrestall5s@stanford.edu",
+    "ssn": "721-07-2343"
+  }
+}
+                \end{verbatim}
+            \end{minipage}
+            & 
+            \begin{minipage}{5cm}
+                \begin{verbatim}
+[
+  {
+    "time": null,
+    "tracing": "family"
+  }
+]
+                \end{verbatim}
+            \end{minipage} \\*
+            \hline
+            22 &
+            \begin{minipage}{7,2cm}
+                \begin{verbatim}
+
+
+{
+  "identity": 356,
+  "labels": [
+    "Person"
+  ],
+  "properties": {
+    "name": "Cecilio Kitchinghan",
+    "birthdate": "1960-02-08",
+    "email": "ckitchinghan5t@sbwire.com",
+    "ssn": "665-75-3753"
+  }
+}
+                \end{verbatim}
+            \end{minipage}
+            & 
+            \begin{minipage}{5cm}
+                \begin{verbatim}
+[
+  {
+    "time": 
+      "2021-10-31T14:04:20Z",
+    "tracing": "other"
+  }
+]
+                \end{verbatim}
+            \end{minipage} \\*
+            \vdots & \vdots & \vdots \\
+            \vdots & \vdots & \vdots \\*
+            24 &
+            \begin{minipage}{7,2cm}
+                \begin{verbatim}
+
+
+{
+  "identity": 622,
+  "labels": [
+    "Person"
+  ],
+  "properties": {
+    "negative_test_date": "2021-08-27",
+    "birthdate": "1959-02-19",
+    "name": "Eileen Vennings",
+    "contagion_date": "2021-08-13",
+    "vaccine_date": "2021-03-31",
+    "healing_date": "2021-08-27",
+    "email": "evennings14@joomla.org",
+    "ssn": "282-56-5584"
+  }
+}
+                \end{verbatim}
+            \end{minipage}
+            & 
+            \begin{minipage}{5cm}
+                \begin{verbatim}
+[
+  {
+    "time": 
+      "2021-11-06T20:50:28Z",
+    "tracing": "wearable"
+  }
+]
+                \end{verbatim}
+            \end{minipage} \\
+            \vdots & \vdots & \vdots \\
+            29 &
+            \begin{minipage}{7,2cm}
+                \begin{verbatim}
+
+
+{
+  "identity": 115,
+  "labels": [
+    "Person"
+  ],
+  "properties": {
+    "name": "Cooper Glisenan",
+    "contagion_date": "2021-10-28",
+    "birthdate": "1943-11-27",
+    "email": "cglisenan37@yandex.ru",
+    "ssn": "797-60-6462"
+  }
+}
+                \end{verbatim}
+            \end{minipage}
+            & 
+            \begin{minipage}{5cm}
+                \begin{verbatim}
+[
+  {
+    "time": 
+      "2021-10-10T20:17:38Z",
+    "tracing": 
+      "Chi St Vincent 
+        Morrilton"
+  }
+]
+                \end{verbatim}
+            \end{minipage} \\
+            \hline
+        \end{longtable}
+    \end{center}
+\end{scriptsize}
 
 \subsubsection{Vaccinated}
 
@@ -549,14 +779,24 @@ WHERE p.contagion_date >= p.vaccine_date
 WITH count(*) AS vaccinated
 MATCH (p1: Person)
 WHERE p1.contagion_date IS NOT NULL
-RETURN (toFloat(vaccinated)/count(*))*100
+RETURN (toFloat(vaccinated)/count(*))*100 AS infected_vaccinated_percent
     \end{verbatim}
 \end{tcolorbox}
 
 \noindent % Removes indentation after box
 Returns the percentage of vaccinated infected people over the total 
 number of infected (considering also the non-vaccinated).
+An example of result is: 
 
+\begin{center}
+    \begin{tabular}{ |c| } 
+        \hline
+        infected\_vaccinated\_percent \\
+        \hline
+        34.835355285961874 \\
+        \hline
+    \end{tabular}
+\end{center}
 
 \subsection{Commands}
 
@@ -576,6 +816,7 @@ CREATE  (a)-[r:WENT_TO {date:datetime($date)}]->(b);
 \noindent % Removes indentation after box
 Explicit registration of a visit to a location.
 Takes the following parameters: 
+
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number of the person;
     \item \texttt{\$date} \emph{(string)}: date and time of the visit;
@@ -595,6 +836,7 @@ CREATE  (a)-[r:HAS_MET {date:datetime($date), device:$device}]->(b),
 \noindent % Removes indentation after box
 Registration of a contact via device.
 Takes the following parameters: 
+
 \begin{itemize}
     \item \texttt{\$ssn1} \emph{(string)}: social security number of the 
         first person;
@@ -627,12 +869,14 @@ Registration of a negative COVID test. It updates the date of the last negative
 test of the person with the given SSN; if the person was infected, the healing 
 date is updated with the date of the test, otherwise it is not changed.
 Takes the following parameters: 
+
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number;
     \item \texttt{\$test\_date} \emph{(string)}: date of the negative test.
 \end{itemize}
 
 \subsubsection{Positive test}
+
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
 MATCH (p {ssn: $ssn})
@@ -643,7 +887,6 @@ WITH p,
     END 
     AS infection
 SET p.contagion_date = infection;
-
     \end{verbatim}
 \end{tcolorbox}
 
@@ -652,6 +895,7 @@ Registration of a positive COVID test. The contagion date is set equal to the
 test date, considering that if a person got covid, they cannot get it again 
 (in this case the contagion date is not updated).
 Takes the following parameters: 
+
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number;
     \item \texttt{\$test\_date} \emph{(string)}: date of the positive test.
