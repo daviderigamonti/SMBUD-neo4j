@@ -908,13 +908,63 @@ Takes the following parameters:
 
 \subsection{Description}
 
-\blindtext
+The app is resize-responsive and is split in 3 tabs: 
+\begin{itemize}
+    \item The first, overview, contains a general view on the database, with 
+        general historical data, computed without date restrictions;
+    \item The second tab contains different commands like adding a contact 
+        between two people or inserting a test result, every command will 
+        update the general overview, so changes will be visible instantly;
+    \item The third tab contains date specific queries: by selecting the 
+        type of query from the dropdown menu and inserting start and end date, 
+        the app will output the required data, in form of table for some 
+        queries (like the cities with most infections).
+\end{itemize}
+
+\noindent % Removes indentation after list
+Not all the written queries are implemented due to time restrictions, priority
+was given to commands and the queries necessary for the dashboard.
 
 \subsection{User Guide}
 
-\blindtext
+The app is written in Java with the help of the JavaFX library, therefore it 
+requires Java 11 or newer versions in order to run properly. \\
+It will only boot if there's a Neo4j database opened on the same device using 
+the default Bolt Protocol port: 7687. \\
+The database must not be empty and its password specified at creation time
+should be "immuni". \\ 
+The plugin APOC must be installed since most of the queries use its 
+functionalities.
 
 \clearpage
+
+\subsection{Screenshots}
+
+\setlength\abovecaptionskip{-0.5cm} % Space between figure and caption
+
+\begin{figure}[h]
+        \centering
+
+        \includegraphics[width=.8\linewidth]{app_1.png}
+        \caption*{Main dashboard of the first tab.} % Caption
+
+        \includegraphics[width=.8\linewidth]{app_2.png}
+        \caption*{Second tab containing various commands.} % Caption
+\end{figure}
+\begin{figure}[h]
+        \centering
+
+        \includegraphics[width=.8\linewidth]{app_3.png}
+        \caption*{Third tab with the query selection system.} % Caption
+
+        \includegraphics[width=.8\linewidth]{app_4.png}
+        \caption*{Result given by the execution of the query 
+            \texttt{QCities}. between the two visible dates} % Caption
+\end{figure}
+
+\setlength\abovecaptionskip{0cm} % Reset caption length
+
+\clearpage % Here otherwise the screenshots go in strange places
 
 % REFERENCES AND SOURCES
 \section{References and sources}
