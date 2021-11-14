@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.smbudapp.GUIController">
+   <children>
+      <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" StackPane.alignment="CENTER">
+        <tabs>
+            <Tab text="Overview">
+               <content>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                           <children>
+                              <VBox alignment="CENTER" maxHeight="300.0" prefHeight="200.0" prefWidth="250.0" spacing="10.0" style="-fx-background-color: #3F424B;">
+                                 <children>
+                                    <ImageView fitHeight="150.0" fitWidth="70.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" smooth="false">
+                                       <image>
+                                          <Image url="@virus.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label text="Infections" textFill="#ffff8d">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="totInf" text="Total infected: " textFill="WHITE" />
+                                    <Label fx:id="totHos" text="Total hospitalized:" textFill="WHITE" />
+                                    <Label fx:id="infAvg" text="Infected average age:" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER" maxHeight="300.0" prefHeight="200.0" prefWidth="250.0" spacing="10.0" style="-fx-background-color: #3F424B;">
+                                 <children>
+                                    <ImageView fitHeight="150.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@vaccine.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label text="Vaccinations" textFill="#ffff8d">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="numVac" text="Total number of vaccinations:" textFill="WHITE" />
+                                    <Label fx:id="infVac" text="Infected with vaccination:" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER" maxHeight="300.0" prefHeight="200.0" prefWidth="250.0" spacing="10.0" style="-fx-background-color: #3F424B;">
+                                 <children>
+                                    <ImageView fitHeight="150.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@heal.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label text="Heals" textFill="#ffff8d">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="healedCOV" text="Total healed from COVID:" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </StackPane>
+               </content>
+            </Tab>
+            <Tab text="Insert/Delete">
+               <content>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <StackPane prefHeight="150.0" prefWidth="200.0" />
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Create access">
+                                 <content>
+                                    <StackPane prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox alignment="CENTER" maxWidth="400.0" prefHeight="403.0" prefWidth="657.0" spacing="20.0">
+                                             <children>
+                                                <TextField fx:id="ssn1" promptText="SSN" />
+                                                <TextField fx:id="loc1" promptText="Location" />
+                                                <TextField fx:id="dt1" promptText="Datetime (ex: 2020-06-01T18:40:32Z)" />
+                                                <Button mnemonicParsing="false" onAction="#createAccess" text="Create" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </StackPane>
+                                 </content>
+                            </Tab>
+                            <Tab text="Create contact">
+                                 <content>
+                                    <StackPane prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox alignment="CENTER" maxWidth="400.0" prefHeight="403.0" prefWidth="657.0" spacing="20.0">
+                                             <children>
+                                                <TextField fx:id="ssna1" promptText="SSN of person 1" />
+                                                <TextField fx:id="ssnb1" layoutX="10.0" layoutY="114.0" promptText="SSN of person 2" />
+                                                <TextField fx:id="dt2" promptText="Datetime (ex: 2020-06-01T18:40:32Z)" />
+                                                <TextField fx:id="dev2" promptText="Device" />
+                                                <Button mnemonicParsing="false" onAction="#createContact" text="Create" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </StackPane>
+                                 </content>
+                            </Tab>
+                              <Tab text="Register negative test">
+                                 <content>
+                                    <StackPane prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox alignment="CENTER" maxWidth="400.0" prefHeight="403.0" prefWidth="657.0" spacing="20.0">
+                                             <children>
+                                                <TextField fx:id="ssn3" promptText="SSN" />
+                                                <TextField fx:id="test3" promptText="Test date" />
+                                                <Button mnemonicParsing="false" onAction="#registerNegTest" text="Register" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </StackPane>
+                                 </content>
+                              </Tab>
+                              <Tab text="Register positive test">
+                                 <content>
+                                    <StackPane prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox alignment="CENTER" maxWidth="400.0" prefHeight="403.0" prefWidth="657.0" spacing="20.0">
+                                             <children>
+                                                <TextField fx:id="ssn4" promptText="SSN" />
+                                                <TextField fx:id="test4" promptText="Test date" />
+                                                <Button mnemonicParsing="false" onAction="#registerPosTest" text="Register" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </StackPane>
+                                 </content>
+                              </Tab>
+                              <Tab text="Delete all relations">
+                                 <content>
+                                    <StackPane prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox alignment="CENTER" maxWidth="400.0" prefHeight="403.0" prefWidth="657.0" spacing="20.0">
+                                             <children>
+                                                <TextField fx:id="name5" promptText="Name of person, place ecc." />
+                                                <TextField fx:id="rel5" promptText="Relation type" />
+                                                <Button mnemonicParsing="false" onAction="#deleteAllRel" text="Delete" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </StackPane>
+                                 </content>
+                              </Tab>
+                              <Tab text="Delete single relation">
+                                 <content>
+                                    <StackPane prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox alignment="CENTER" maxWidth="400.0" prefHeight="403.0" prefWidth="657.0" spacing="20.0">
+                                             <children>
+                                                <TextField fx:id="namea6" promptText="Name of first node" />
+                                                <TextField fx:id="nameb6" promptText="Name of second node" />
+                                                <TextField fx:id="rel6" promptText="Relation type" />
+                                                <Button mnemonicParsing="false" onAction="#deleteSingle" text="Delete" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </StackPane>
+                                 </content>
+                              </Tab>
+                              <Tab text="Delete location">
+                                 <content>
+                                    <StackPane prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox alignment="CENTER" maxWidth="400.0" prefHeight="403.0" prefWidth="657.0" spacing="20.0">
+                                             <children>
+                                                <TextField fx:id="loc7" promptText="Name of location" />
+                                                <Button mnemonicParsing="false" onAction="#deleteLoc" text="Delete" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </StackPane>
+                                 </content>
+                              </Tab>
+                              <Tab text="Delete person">
+                                 <content>
+                                    <StackPane prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox alignment="CENTER" maxWidth="400.0" prefHeight="403.0" prefWidth="657.0" spacing="20.0">
+                                             <children>
+                                                <TextField fx:id="ssn8" promptText="SSN" />
+                                                <Button mnemonicParsing="false" onAction="#deletePerson" text="Delete" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </StackPane>
+                                 </content>
+                              </Tab>
+                          </tabs>
+                        </TabPane>
+                     </children></StackPane>
+               </content>
+            </Tab>
+            <Tab text="Specific Queries">
+               <content>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <HBox alignment="CENTER" spacing="30.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="440.0" prefWidth="447.0" spacing="20.0">
+                                 <children>
+                                    <HBox alignment="CENTER" spacing="20.0">
+                                       <children>
+                                          <Label text="Select query: " textFill="WHITE">
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="dropdown" prefHeight="26.0" prefWidth="271.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                                       <children>
+                                          <Label text="Span of time: " textFill="WHITE">
+                                             <HBox.margin>
+                                                <Insets top="10.0" />
+                                             </HBox.margin>
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="264.0" spacing="10.0">
+                                             <children>
+                                                <TextField promptText="Starting date (ex: 2021-10-31)" />
+                                                <TextField promptText="End date" />
+                                             </children></VBox>
+                                       </children>
+                                    </HBox>
+                                    <Button mnemonicParsing="false" text="Execute query" />
+                                 </children>
+                              </VBox>
+                              <StackPane maxHeight="400.0" maxWidth="300.0" prefHeight="400.0" prefWidth="300.0" style="-fx-background-color: #3F424B;">
+                                 <children>
+                                    <Label text="No queries have been done yet." textFill="WHITE" />
+                                 </children></StackPane>
+                           </children>
+                        </HBox>
+                     </children>
+                  </StackPane>
+               </content>
+            </Tab>
+        </tabs>
+         <StackPane.margin>
+            <Insets />
+         </StackPane.margin>
+      </TabPane>
+   </children>
+</StackPane>
