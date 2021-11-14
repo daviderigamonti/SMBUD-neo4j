@@ -20,33 +20,37 @@ WITH p, apoc.coll.randomItems(contacts, apoc.coll.randomItem(contactsRange)) as 
 {batchSize: 1000, parallel: false});
 
 // FAMILY CREATION 
-MATCH (p:Person),(c:City) where (p)-[:LIVES_IN]->(c)
-WITH collect(p) as people,c
-MATCH (p1:Person) where (p1)-[:LIVES_IN]->(c)
-WITH  p1,apoc.coll.randomItems(people, 3) as people
-where not p1 in people
-FOREACH (person in people | CREATE (p1)-[:FAMILY]->(person) CREATE (person)-[:FAMILY]->(p1) );
+call apoc.periodic.iterate("
+WITH range(0,1) as contactsRange
+MATCH (h:Person),(c:City) where (h)-[:LIVES_IN]->(c)
+WITH collect(h) as contacts, contactsRange,c
+MATCH (p:Person) where (p)-[:LIVES_IN]->(c)
+WITH p, apoc.coll.randomItems(contacts, apoc.coll.randomItem(contactsRange)) as contacts
+// create relationships
+    RETURN p,contacts", 
+"FOREACH (contact in contacts|  CREATE (p)-[:FAMILY]->(contact) CREATE (contact)-[:FAMILY]->(p) )", 
+{batchSize: 1000, parallel: false});
 
-// QUERIES PER TROVARE DOPPIE RELAZIONI ED ELIMINARLE
-//match  (p)-[r:FAMILY]->(p1),(p)-[s:FAMILY]->(p1) where r<>s return p
+// QUER TO ELIMINATE DOUBLE RELATIONS
 match  (p)-[r:FAMILY]->(p1),(p)-[s:FAMILY]->(p1) where r<>s delete r;
 
-// DELETE SELF-RELATION HAS_MET
-Match (p:Person)-[r:HAS_MET]->(p) delete r;
+// DELETE SELF-RELATION FAMILY
+Match (p:Person)-[r:FAMILY]->(p) delete r;
 
 // PEOPLE WHO MET BETWEEN 28/10/2021 AND 10/11/2021 (data coming from the application)
 call apoc.periodic.iterate("
 MATCH (h:Person)
 WITH collect(h) as contacts
 MATCH (p:Person)
-WITH p, apoc.coll.randomItems(contacts, toInteger(rand()*3.5)) as contacts,toInteger(1635458800+rand()*1066000) as sec,  toInteger(rand()*3) as device,['smartphone','wearable','other']as devices
+WITH p, apoc.coll.randomItems(contacts, toInteger(rand()*3)) as contacts,toInteger(1635458800+rand()*1066000) as sec, toInteger(rand()*3) as device,['smartphone','wearable','other']as devices
 RETURN p,contacts,sec,device,devices", 
 "FOREACH (contact in contacts|  CREATE (p)-[:HAS_MET {date:datetime({epochSeconds:sec}), device:devices[device]}]->(contact) CREATE (contact)-[:HAS_MET {date:datetime({epochSeconds:sec}), device:devices[device]}]->(p))", 
 {batchSize: 1000, parallel: false});
 
+// DELETE SELF-RELATION HAS_MET
+Match (p:Person)-[r:HAS_MET]->(p) delete r;
 
-//Relazione Ristoranti --> Città:
-
+// ASSIGN RESTAURANTS TO CITIES:
 call apoc.periodic.iterate("
 MATCH (c:City) where NOT ()-[:IS_IN]->(:c)
 WITH collect(c) as cities
@@ -57,8 +61,7 @@ WITH l, apoc.coll.randomItems(cities, 1) as cities
 "FOREACH (city in cities|  CREATE (l)-[:IS_IN]->(city))", 
 {batchSize: 1000, parallel: false});
 
-//Relazione Ospedali --> Città:
-
+// ASSIGN HOSPITALS TO CITIES::
 call apoc.periodic.iterate("
 MATCH (c:City) where NOT ()-[:IS_IN]->(:c)
 WITH collect(c) as cities
@@ -69,8 +72,7 @@ WITH l, apoc.coll.randomItems(cities, 1) as cities
 "FOREACH (city in cities|  CREATE (l)-[:IS_IN]->(city))", 
 {batchSize: 1000, parallel: false});
 
-//Relazione Teatri --> Città:
-
+// ASSIGN THEATERS TO CITIES:
 call apoc.periodic.iterate("
 MATCH (c:City) where NOT ()-[:IS_IN]->(:c)
 WITH collect(c) as cities
@@ -81,8 +83,7 @@ WITH l, apoc.coll.randomItems(cities, 1) as cities
 "FOREACH (city in cities|  CREATE (l)-[:IS_IN]->(city))", 
 {batchSize: 1000, parallel: false});
 
-//Relazione Persone --> Edifici:
-
+// ASSIGN PEOPLE VISITING LOCATIONS: (each person is assumed to visit 6 to 10 locations):
 WITH range(6,10) as peopleRange
 MATCH (p:Person) where p.contagion_date >= date({year: 2021, month:10, day:17})
 WITH collect(p) as people, peopleRange
@@ -92,8 +93,7 @@ WITH l, apoc.coll.randomItems(people, apoc.coll.randomItem(peopleRange)) as peop
 // create relationships
 FOREACH (person IN people | CREATE (person)-[:WENT_TO {date: datetime({epochSeconds:toInteger(1631923200+rand()*2591940)})}]->(l));
 
-//Relazione Persone guarite --> Edifici:
-
+// ASSIGN NEGATIVE PEOPLE VISITING LOCATIONS:
 WITH range(6,10) as peopleRange
 MATCH (p:Person) where p.contagion_date < date({year: 2021, month:10, day:17})
 WITH collect(p) as people, peopleRange
@@ -103,15 +103,14 @@ WITH l, apoc.coll.randomItems(people, apoc.coll.randomItem(peopleRange)) as peop
 // create relationships
 FOREACH (person IN people | CREATE (person)-[:WENT_TO {date: datetime({epochSeconds:toInteger(1631923200+rand()*5270340)})}]->(l));
 
-//RECOVERY RELATIONS
-
+// PEOPLE HOSPITALIZED FOR COVID
 call apoc.periodic.iterate("
 MATCH (h:Location {type: 'Hospital'}) where NOT ()-[:IS_HOSPITALIZED_IN]->(:h)
 WITH collect(h) as hospitals
 MATCH (p:Person)
-WHERE p.contagion_date IS NOT NULL AND p.healing_date IS NULL and rand()<0.7
+WHERE p.contagion_date IS NOT NULL AND p.negative_test_date IS NULL and rand()<0.7
 WITH p, apoc.coll.randomItems(hospitals, 1) as hospitals
 // create relationships
     RETURN p,hospitals", 
-"FOREACH (hospital in hospitals|  CREATE (p)-[:IS_HOSPITALIZED_IN{recovery_date:p.contagion_date}]->(hospital))", 
+"FOREACH (hospital in hospitals|  CREATE (p)-[:IS_HOSPITALIZED_IN{date:p.contagion_date}]->(hospital))", 
 {batchSize: 1000, parallel: false});

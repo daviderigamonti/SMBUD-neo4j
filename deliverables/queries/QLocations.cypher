@@ -9,4 +9,4 @@ AND person.contagion_date is not null
 AND person.contagion_date >= date($date1) and person.contagion_date <= date($date2)
 WITH places, count(*) AS infected
 ORDER BY infected DESC
-RETURN places.name, infected;
+RETURN places.name as location, places.type as type, infected;

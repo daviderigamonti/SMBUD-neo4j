@@ -246,7 +246,7 @@ database dump will be provided alongside this document.
 
 Only the most significative queries are shown in this document. \\
 All the implemented queries will be provided alongside this document. \\
-\textbf{N.B.} All the dates in input should be strings formated as: 'YYYY-MM-DD'.
+\textbf{N.B.} Dates in input should be strings formated as 'YYYY-MM-DD', while datetimes as "YYYY-MM-DDThh:mm:ssZ".
 
 \subsubsection{Average age}
 
@@ -270,7 +270,17 @@ RETURN  avg((now-pc_birth)/365) AS avg_age_nothospitalized,
 
 \noindent % Removes indentation after box
 Returns the average age for infected (but not hospitalized) and for infected 
-and hospitalized people inside the database.
+and hospitalized people inside the database. \\
+An example of result is:
+\begin{center}
+\begin{tabular}{ |c|c| } 
+ \hline
+avg\_age\_nothospitalized & avg\_age\_hospitalized \\
+\hline
+50.037848605577615 & 55.02631578947379 \\
+ \hline
+\end{tabular}
+\end{center}
 
 \subsubsection{Cities}
 
@@ -285,6 +295,7 @@ RETURN cities.name, infected;
     \end{verbatim}
 \end{tcolorbox}
 
+
 \noindent % Removes indentation after box
 Returns cities and number of infected people per city in a given span of time, 
 results are sorted by the number of infected people. 
@@ -293,7 +304,19 @@ Takes the following parameters:
     \item \texttt{\$date1} \emph{(string)}: starting date;
     \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
-
+An example of result is: \\
+\begin{center}
+\begin{tabular}{ |c|c|c|} 
+ \hline
+& cities.name & infected\\
+\hline
+1 & Honolulu & 8 \\
+2 & Concord & 8\\
+3 & Des Moines & 7\\
+4 & Little Rock & 6\\
+ \hline
+\end{tabular}
+\end{center}
 \subsubsection{Devices}
 
 \begin{tcolorbox}[fontupper=\scriptsize]
@@ -322,6 +345,20 @@ RETURN  device, infected_contacts;
 \noindent % Removes indentation after box
 Returns the number of infected contacts registered for each type of device, 
 results are sorted by the number of infected contacts. 
+An example of result is: \\
+\begin{center}
+\begin{tabular}{ |c|c|} 
+ \hline
+device & infected\_contacts\\
+\hline
+smartphone & 46 \\
+other & 42\\
+wearable & 23\\
+ \hline
+\end{tabular}
+\end{center}
+\subsubsection{Devices}
+
 
 \subsubsection{Healed}
 \begin{tcolorbox}[fontupper=\scriptsize]
@@ -348,7 +385,7 @@ Takes the following parameters:
 MATCH (p:Person)-[r:IS_HOSPITALIZED_IN]->(h:Location)
 WITH collect(p) as patients, h, r
 WHERE r.date >= date($date1) and r.date <= date($date2)
-RETURN h.name, count(patients)
+RETURN h.name ah hospital, count(patients) as patients
 ORDER BY count(patients) DESC;
     \end{verbatim}
 \end{tcolorbox}
@@ -361,6 +398,19 @@ Takes the following parameters:
     \item \texttt{\$date1} \emph{(string)}: starting date;
     \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
+An example of result is: \\
+\begin{center}
+\begin{tabular}{ |c|c|c|} 
+ \hline
+& hospital & patients\\
+\hline
+1 & Blue Hill Memorial Hospital & 5 \\
+2 & Baylor Scott and White Texas Spine and Joint Hospital & 3\\
+3 & Stephens County Hospital & 3\\
+4 & Citizens Medical Center & 3\\
+ \hline
+\end{tabular}
+\end{center}
 
 \subsubsection{Infected}
 \begin{tcolorbox}[fontupper=\scriptsize]
@@ -390,19 +440,31 @@ AND person.contagion_date >= date($date1)
 AND person.contagion_date <= date($date2)
 WITH places, count(*) AS infected
 ORDER BY infected DESC
-RETURN places.name, infected;
+RETURN places.name as location, places.type as type, infected;
     \end{verbatim}
 \end{tcolorbox}
 \noindent % Removes indentation after box
 Returns locations and the corresponding number of people who went there and 
 possibly got infected during a certain span of time, results are sorted 
-according to the number of visits. and\\
+according to the number of visits. \\
 Takes the following parameters: 
 \begin{itemize}
     \item \texttt{\$date1} \emph{(string)}: starting date;
     \item \texttt{\$date2} \emph{(string)}: ending date.
 \end{itemize}
-
+An example of result is: \\
+\begin{center}
+\begin{tabular}{ |c|c|c|c|} 
+ \hline
+& location & type & infected\\
+\hline
+1 & The China Doll & Restaurant & 7 \\
+2 & Cochran Memorial Hospital & Hospital & 6\\
+3 & Century 16 Aurora & Theater & 6\\
+4 & Carmike Patton Creek 15 + Imax & Theater & 6\\
+ \hline
+\end{tabular}
+\end{center}
 \subsubsection{Notifications}
 
 \begin{tcolorbox}[fontupper=\scriptsize]
@@ -476,6 +538,7 @@ Takes the following parameters:
     \item \texttt{\$ssn} \emph{(string)}: social security number of the 
         infected person.
 \end{itemize}
+\todo{add example}
 
 \subsubsection{Vaccinated}
 
@@ -516,7 +579,6 @@ Takes the following parameters:
 \begin{itemize}
     \item \texttt{\$ssn} \emph{(string)}: social security number of the person;
     \item \texttt{\$date} \emph{(string)}: date and time of the visit;
-\todo{in che formato va scritta visto che è datetime???}
     \item \texttt{\$location} \emph{(string)}: name of the location.
 \end{itemize}
 
@@ -524,7 +586,7 @@ Takes the following parameters:
 
 \begin{tcolorbox}[fontupper=\scriptsize]
     \begin{verbatim}
-MATCH   (a:Person {ssn:$ssn1}), (b:Person {ssn1:$ssn2})
+MATCH   (a:Person {ssn:$ssn1}), (b:Person {ssn:$ssn2})
 CREATE  (a)-[r:HAS_MET {date:datetime($date), device:$device}]->(b), 
         (b)-[r:HAS_MET {date:datetime($date), device:$device}]->(a);
     \end{verbatim}

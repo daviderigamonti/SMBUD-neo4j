@@ -6,5 +6,5 @@
 MATCH (p:Person)-[r:IS_HOSPITALIZED_IN]->(h:Location)
 WITH collect(p) as patients, h, r
 WHERE r.date >= date($date1) and r.date <= date($date2)
-RETURN h.name, count(patients)
+RETURN h.name as hospital, count(patients) as patients
 ORDER BY count(patients) DESC;
