@@ -35,7 +35,9 @@ WITH p, apoc.coll.randomItems(contacts, apoc.coll.randomItem(contactsRange)) as 
 match  (p)-[r:FAMILY]->(p1),(p)-[s:FAMILY]->(p1) where r<>s delete r;
 
 // DELETE SELF-RELATION FAMILY
-Match (p:Person)-[r:FAMILY]->(p) delete r;
+MATCH (p1:Person)-[r:FAMILY]->(p2:Person)
+WHERE p1=p2
+DELETE r;
 
 // PEOPLE WHO MET BETWEEN 28/10/2021 AND 10/11/2021 (data coming from the application)
 call apoc.periodic.iterate("
@@ -48,7 +50,9 @@ RETURN p,contacts,sec,device,devices",
 {batchSize: 1000, parallel: false});
 
 // DELETE SELF-RELATION HAS_MET
-Match (p:Person)-[r:HAS_MET]->(p) delete r;
+MATCH (p1:Person)-[r:HAS_MET]->(p2:Persone)
+WHERE p1=p2
+DELETE r;
 
 // ASSIGN RESTAURANTS TO CITIES:
 call apoc.periodic.iterate("
